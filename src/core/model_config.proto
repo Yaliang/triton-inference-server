@@ -28,8 +28,6 @@
 
 syntax = "proto3";
 
-package nvidia.inferenceserver;
-
 //@@.. cpp:namespace:: nvidia::inferenceserver
 
 //@@
