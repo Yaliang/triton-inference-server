@@ -367,7 +367,7 @@ OnnxBackend::Context::ValidateBooleanSequenceControl(
     bool* have_control)
 {
   std::string tensor_name;
-  DataType tensor_datatype;
+  inference::DataType tensor_datatype;
   RETURN_IF_ERROR(GetBooleanSequenceControlProperties(
       batcher, model_name, control_kind, required, &tensor_name,
       &tensor_datatype, nullptr, nullptr, nullptr, nullptr));
@@ -398,14 +398,14 @@ OnnxBackend::Context::ValidateBooleanSequenceControl(
               DimsListToString(debatched_dims) + " but dims [1] is expected");
     }
 
-    if (ConvertToOnnxDataType(tensor_datatype) != iit->second.type_) {
+    if (ConvertToOnnxinference::DataType(tensor_datatype) != iit->second.type_) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + model_name + "', sequence control '" +
               tensor_name + "', the model expects data-type " +
-              OnnxDataTypeName(iit->second.type_) +
+              Onnxinference::DataTypeName(iit->second.type_) +
               " but the model configuration specifies data-type " +
-              DataType_Name(tensor_datatype));
+              inference::DataType_Name(tensor_datatype));
     }
   }
 
@@ -419,7 +419,7 @@ OnnxBackend::Context::ValidateTypedSequenceControl(
     bool* have_control)
 {
   std::string tensor_name;
-  DataType tensor_datatype;
+  inference::DataType tensor_datatype;
   RETURN_IF_ERROR(GetTypedSequenceControlProperties(
       batcher, model_name, control_kind, required, &tensor_name,
       &tensor_datatype));
@@ -450,14 +450,14 @@ OnnxBackend::Context::ValidateTypedSequenceControl(
               DimsListToString(debatched_dims) + " but dims [1] is expected");
     }
 
-    if (ConvertToOnnxDataType(tensor_datatype) != iit->second.type_) {
+    if (ConvertToOnnxinference::DataType(tensor_datatype) != iit->second.type_) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + model_name + "', sequence control '" +
               tensor_name + "', the model expects data-type " +
-              OnnxDataTypeName(iit->second.type_) +
+              Onnxinference::DataTypeName(iit->second.type_) +
               " but the model configuration specifies data-type " +
-              DataType_Name(tensor_datatype));
+              inference::DataType_Name(tensor_datatype));
     }
   }
 
@@ -490,19 +490,19 @@ OnnxBackend::Context::ValidateInputs(
       RETURN_IF_ERROR(CheckAllowedModelInput(io, input_tensor_names));
     }
 
-    auto onnx_data_type = ConvertToOnnxDataType(io.data_type());
+    auto onnx_data_type = ConvertToOnnxinference::DataType(io.data_type());
     if (onnx_data_type == ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for input '" + io.name() + "' for model '" + model_name + "'");
     } else if (onnx_data_type != iit->second.type_) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + model_name + ", unexpected datatype " +
-              DataType_Name(ConvertFromOnnxDataType(iit->second.type_)) +
+              inference::DataType_Name(ConvertFromOnnxinference::DataType(iit->second.type_)) +
               " for input '" + io.name() + "', expecting " +
-              DataType_Name(io.data_type()));
+              inference::DataType_Name(io.data_type()));
     }
 
     // If a reshape is provided for the input then use that when
@@ -534,19 +534,19 @@ OnnxBackend::Context::ValidateOutputs(
       RETURN_IF_ERROR(CheckAllowedModelOutput(io, output_tensor_names));
     }
 
-    auto onnx_data_type = ConvertToOnnxDataType(io.data_type());
+    auto onnx_data_type = ConvertToOnnxinference::DataType(io.data_type());
     if (onnx_data_type == ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for output '" + io.name() + "' for model '" + model_name + "'");
     } else if (onnx_data_type != iit->second.type_) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + model_name + ", unexpected datatype " +
-              DataType_Name(ConvertFromOnnxDataType(iit->second.type_)) +
+              inference::DataType_Name(ConvertFromOnnxinference::DataType(iit->second.type_)) +
               " for output '" + io.name() + "', expecting " +
-              DataType_Name(io.data_type()));
+              inference::DataType_Name(io.data_type()));
     }
 
     // If a reshape is provided for the input then use that when
@@ -763,7 +763,7 @@ OnnxBackend::Context::SetInputTensors(
     batchn_shape.insert(
         batchn_shape.end(), batch1_shape.begin(), batch1_shape.end());
 
-    const DataType datatype = repr_input->DType();
+    const inference::DataType datatype = repr_input->DType();
 
     // [TODO] currently ONNX Runtime only recognize input data on CPU
     // https://github.com/microsoft/onnxruntime/issues/1621
@@ -782,7 +782,7 @@ OnnxBackend::Context::SetInputTensors(
       RETURN_IF_ORT_ERROR(ort_api->CreateTensorWithDataAsOrtValue(
           allocator_info, (void*)input_buffer, total_byte_size,
           batchn_shape.data(), batchn_shape.size(),
-          ConvertToOnnxDataType(datatype), &input_tensors_.back()));
+          ConvertToOnnxinference::DataType(datatype), &input_tensors_.back()));
 
       collector->ProcessTensor(
           name, datatype, batch1_shape, input_buffer, total_byte_size, mem_type,
@@ -1021,7 +1021,7 @@ OnnxBackend::Context::ReadOutputTensors(
         type_and_shape, batchn_shape.data(), batchn_shape.size()));
     const size_t element_count = GetElementCount(batchn_shape);
 
-    ONNXTensorElementDataType type;
+    ONNXTensorElementinference::DataType type;
     RETURN_IF_ORT_ERROR(ort_api->GetTensorElementType(type_and_shape, &type));
 
     if (type == ONNX_TENSOR_ELEMENT_DATA_TYPE_STRING) {
@@ -1050,7 +1050,7 @@ OnnxBackend::Context::ReadOutputTensors(
       // [TODO] currently ONNX output data are always on CPU
       // https://github.com/microsoft/onnxruntime/issues/1621
       responder.ProcessTensor(
-          name, ConvertFromOnnxDataType(type), batchn_shape, output_buffer,
+          name, ConvertFromOnnxinference::DataType(type), batchn_shape, output_buffer,
           TRITONSERVER_MEMORY_CPU, 0);
     }
   }
@@ -1093,7 +1093,7 @@ OnnxBackend::Context::SetStringOutputBuffer(
       }
       InferenceResponse::Output* response_output = nullptr;
       response->AddOutput(
-          name, DataType::TYPE_STRING, *batchn_shape, &response_output);
+          name, inference::DataType::TYPE_STRING, *batchn_shape, &response_output);
       // Calculate expected byte size in advance using string offsets
       const size_t data_byte_size =
           offsets[element_idx + expected_element_cnt] - offsets[element_idx];

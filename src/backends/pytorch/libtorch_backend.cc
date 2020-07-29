@@ -63,7 +63,7 @@ LibTorchBackend::Context::~Context()
 }
 
 std::pair<bool, torch::ScalarType>
-ConvertDataTypeToTorchType(const DataType& dtype)
+Convertinference::DataTypeToTorchType(const inference::DataType& dtype)
 {
   torch::ScalarType type = torch::kInt;
   switch (dtype) {
@@ -105,8 +105,8 @@ ConvertDataTypeToTorchType(const DataType& dtype)
   return std::make_pair(true, type);
 }
 
-DataType
-ConvertTorchTypeToDataType(const torch::ScalarType& ttype)
+inference::DataType
+ConvertTorchTypeToinference::DataType(const torch::ScalarType& ttype)
 {
   switch (ttype) {
     case torch::kBool:
@@ -279,11 +279,11 @@ LibTorchBackend::Context::ValidateInputs(
   int ip_index = 0;
 
   for (const auto& io : ios) {
-    const auto pr = ConvertDataTypeToTorchType(io.data_type());
+    const auto pr = Convertinference::DataTypeToTorchType(io.data_type());
     if (!pr.first) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for input '" + io.name() + "' for model '" + name_ + "'");
     } else {
       const std::string& name = io.name();
@@ -347,11 +347,11 @@ LibTorchBackend::Context::ValidateOutputs(
   int op_index;
 
   for (const auto& io : ios) {
-    const auto pr = ConvertDataTypeToTorchType(io.data_type());
+    const auto pr = Convertinference::DataTypeToTorchType(io.data_type());
     if (!pr.first) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for output '" + io.name() + "' for model '" + name_ + "'");
     } else {
       const std::string& name = io.name();
@@ -401,15 +401,15 @@ LibTorchBackend::Context::SetInputTensors(
     }
     batchn_shape.insert(
         batchn_shape.end(), batch1_shape.begin(), batch1_shape.end());
-    const DataType datatype = repr_input->DType();
+    const inference::DataType datatype = repr_input->DType();
 
     int ip_index = input_index_map_[input_name];
 
-    const auto torch_dtype = ConvertDataTypeToTorchType(datatype);
+    const auto torch_dtype = Convertinference::DataTypeToTorchType(datatype);
     if (!torch_dtype.first) {
       return Status(
-          Status::Code::INTERNAL, "Failed to convert DataType '" +
-                                      DataType_Name(datatype) +
+          Status::Code::INTERNAL, "Failed to convert inference::DataType '" +
+                                      inference::DataType_Name(datatype) +
                                       "' to Torch datatype");
     }
 
@@ -480,7 +480,7 @@ LibTorchBackend::Context::ReadOutputTensors(
 
     // Checked at initialization time to make sure that STRING is not
     // being used for an output, so can just assume fixed-sized here.
-    const DataType dtype = output_config->data_type();
+    const inference::DataType dtype = output_config->data_type();
 
     const char* output_buffer = nullptr;
     size_t byte_size = 0;
@@ -510,20 +510,20 @@ LibTorchBackend::Context::ReadOutputTensors(
 Status
 LibTorchBackend::Context::GetOutputTensor(
     std::vector<torch::Tensor>* outputs_, const int& op_index,
-    const std::string& name, const DataType dtype, const char** content,
+    const std::string& name, const inference::DataType dtype, const char** content,
     size_t* byte_size, std::vector<int64_t>* content_shape)
 {
   try {
     torch::Tensor output_flat = (*outputs_)[op_index].contiguous().flatten();
 
     // verify output datatype matches datatype from model config
-    DataType rec_dtype = ConvertTorchTypeToDataType(output_flat.scalar_type());
+    inference::DataType rec_dtype = ConvertTorchTypeToinference::DataType(output_flat.scalar_type());
     if (dtype != rec_dtype) {
       return Status(
           Status::Code::INVALID_ARG,
-          "unexpected datatype " + DataType_Name(rec_dtype) +
+          "unexpected datatype " + inference::DataType_Name(rec_dtype) +
               " for inference output '" + name + "', expecting " +
-              DataType_Name(dtype));
+              inference::DataType_Name(dtype));
     }
 
     *byte_size = output_flat.nbytes();

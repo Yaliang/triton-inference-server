@@ -141,7 +141,7 @@ InputOutputInfos(
     RETURN_IF_ORT_ERROR(
         ort_api->CastTypeInfoToTensorInfo(typeinfo, &tensor_info));
 
-    ONNXTensorElementDataType type;
+    ONNXTensorElementinference::DataType type;
     RETURN_IF_ORT_ERROR(ort_api->GetTensorElementType(tensor_info, &type));
 
     size_t num_dims;
@@ -160,7 +160,7 @@ InputOutputInfos(
 }  // namespace
 
 std::string
-OnnxDataTypeName(ONNXTensorElementDataType onnx_type)
+Onnxinference::DataTypeName(ONNXTensorElementinference::DataType onnx_type)
 {
   switch (onnx_type) {
     case ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT:
@@ -203,8 +203,8 @@ OnnxDataTypeName(ONNXTensorElementDataType onnx_type)
   return "UNDEFINED";
 }
 
-DataType
-ConvertFromOnnxDataType(ONNXTensorElementDataType onnx_type)
+inference::DataType
+ConvertFromOnnxinference::DataType(ONNXTensorElementinference::DataType onnx_type)
 {
   switch (onnx_type) {
     case ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT:
@@ -250,8 +250,8 @@ ConvertFromOnnxDataType(ONNXTensorElementDataType onnx_type)
   return TYPE_INVALID;
 }
 
-ONNXTensorElementDataType
-ConvertToOnnxDataType(DataType data_type)
+ONNXTensorElementinference::DataType
+ConvertToOnnxinference::DataType(inference::DataType data_type)
 {
   switch (data_type) {
     case TYPE_UINT8:

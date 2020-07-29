@@ -47,8 +47,8 @@ SetIOConfig(
   config_io->set_name(name);
 
   // only set type and shape if they are not set
-  if (config_io->data_type() == DataType::TYPE_INVALID) {
-    config_io->set_data_type(ConvertFromOnnxDataType(info.type_));
+  if (config_io->data_type() == inference::DataType::TYPE_INVALID) {
+    config_io->set_data_type(ConvertFromOnnxinference::DataType(info.type_));
   }
 
   if (config_io->dims_size() == 0) {
@@ -73,12 +73,12 @@ ValidateIOInfoType(
 {
   // Validate all tensors are in supported data type
   for (const auto& io_info : infos) {
-    if (ConvertFromOnnxDataType(io_info.second.type_) ==
-        DataType::TYPE_INVALID) {
+    if (ConvertFromOnnxinference::DataType(io_info.second.type_) ==
+        inference::DataType::TYPE_INVALID) {
       return Status(
           Status::Code::INTERNAL, "unable to autofill for '" + model_name +
                                       "', unsupported data-type '" +
-                                      OnnxDataTypeName(io_info.second.type_) +
+                                      Onnxinference::DataTypeName(io_info.second.type_) +
                                       "'");
     }
   }

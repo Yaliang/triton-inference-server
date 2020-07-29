@@ -615,7 +615,7 @@ EnsembleContext::ResponseComplete(
                 .output_to_tensor_;
         for (uint32_t idx = 0; idx < count; idx++) {
           const char* name;
-          TRITONSERVER_DataType datatype;
+          TRITONSERVER_inference::DataType datatype;
           const int64_t* shape;
           uint64_t dim_count;
           const void* base;
@@ -631,7 +631,7 @@ EnsembleContext::ResponseComplete(
             if (it != output_to_tensor.end()) {
               std::unique_ptr<InferenceRequest::Input> tensor(
                   new InferenceRequest::Input(
-                      it->second, TritonToDataType(datatype), shape,
+                      it->second, TritonToinference::DataType(datatype), shape,
                       dim_count));
 
               if (byte_size != 0) {

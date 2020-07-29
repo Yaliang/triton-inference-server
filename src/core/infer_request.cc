@@ -346,7 +346,7 @@ InferenceRequest::ImmutableInput(
 
 Status
 InferenceRequest::AddOriginalInput(
-    const std::string& name, const DataType datatype, const int64_t* shape,
+    const std::string& name, const inference::DataType datatype, const int64_t* shape,
     const uint64_t dim_count, InferenceRequest::Input** input)
 {
   const auto& pr = original_inputs_.emplace(
@@ -370,7 +370,7 @@ InferenceRequest::AddOriginalInput(
 
 Status
 InferenceRequest::AddOriginalInput(
-    const std::string& name, const DataType datatype,
+    const std::string& name, const inference::DataType datatype,
     const std::vector<int64_t>& shape, InferenceRequest::Input** input)
 {
   return AddOriginalInput(name, datatype, &shape[0], shape.size(), input);
@@ -399,7 +399,7 @@ InferenceRequest::RemoveAllOriginalInputs()
 
 Status
 InferenceRequest::AddOverrideInput(
-    const std::string& name, const DataType datatype,
+    const std::string& name, const inference::DataType datatype,
     const std::vector<int64_t>& shape,
     std::shared_ptr<InferenceRequest::Input>* input)
 {
@@ -603,9 +603,9 @@ InferenceRequest::Normalize()
       return Status(
           Status::Code::INVALID_ARG,
           "inference input data-type is '" +
-              std::string(DataTypeToProtocolString(input.DType())) +
+              std::string(inference::DataTypeToProtocolString(input.DType())) +
               "', model expects '" +
-              std::string(DataTypeToProtocolString(input_config->data_type())) +
+              std::string(inference::DataTypeToProtocolString(input_config->data_type())) +
               "' for '" + ModelName() + "'");
     }
 
@@ -741,7 +741,7 @@ InferenceRequest::ReportStatisticsWithDuration(
 InferenceRequest::Input::Input() : data_(new MemoryReference) {}
 
 InferenceRequest::Input::Input(
-    const std::string& name, const DataType datatype, const int64_t* shape,
+    const std::string& name, const inference::DataType datatype, const int64_t* shape,
     const uint64_t dim_count)
     : name_(name), datatype_(datatype),
       original_shape_(shape, shape + dim_count), is_shape_tensor_(false),
@@ -750,7 +750,7 @@ InferenceRequest::Input::Input(
 }
 
 InferenceRequest::Input::Input(
-    const std::string& name, const DataType datatype,
+    const std::string& name, const inference::DataType datatype,
     const std::vector<int64_t>& shape)
     : name_(name), datatype_(datatype), original_shape_(shape),
       is_shape_tensor_(false), data_(new MemoryReference)
@@ -855,7 +855,7 @@ std::ostream&
 operator<<(std::ostream& out, const InferenceRequest::Input& input)
 {
   out << "input: " << input.Name()
-      << ", type: " << DataTypeToProtocolString(input.DType())
+      << ", type: " << inference::DataTypeToProtocolString(input.DType())
       << ", original shape: " << DimsListToString(input.OriginalShape())
       << ", shape: " << DimsListToString(input.Shape());
   if (input.IsShapeTensor()) {

@@ -28,19 +28,19 @@
 
 namespace nvidia { namespace inferenceserver {
 
-DataType
-ConvertTrtTypeToDataType(nvinfer1::DataType trt_type)
+inference::DataType
+ConvertTrtTypeToinference::DataType(nvinfer1::inference::DataType trt_type)
 {
   switch (trt_type) {
-    case nvinfer1::DataType::kFLOAT:
+    case nvinfer1::inference::DataType::kFLOAT:
       return TYPE_FP32;
-    case nvinfer1::DataType::kHALF:
+    case nvinfer1::inference::DataType::kHALF:
       return TYPE_FP16;
-    case nvinfer1::DataType::kINT8:
+    case nvinfer1::inference::DataType::kINT8:
       return TYPE_INT8;
-    case nvinfer1::DataType::kINT32:
+    case nvinfer1::inference::DataType::kINT32:
       return TYPE_INT32;
-    case nvinfer1::DataType::kBOOL:
+    case nvinfer1::inference::DataType::kBOOL:
       return TYPE_BOOL;
   }
 
@@ -91,25 +91,25 @@ MemoryFormat_Name(MemoryFormat fmt)
   return "INVALID";
 }
 
-std::pair<bool, nvinfer1::DataType>
-ConvertDataTypeToTrtType(const DataType& dtype)
+std::pair<bool, nvinfer1::inference::DataType>
+Convertinference::DataTypeToTrtType(const inference::DataType& dtype)
 {
-  nvinfer1::DataType trt_type = nvinfer1::DataType::kFLOAT;
+  nvinfer1::inference::DataType trt_type = nvinfer1::inference::DataType::kFLOAT;
   switch (dtype) {
     case TYPE_FP32:
-      trt_type = nvinfer1::DataType::kFLOAT;
+      trt_type = nvinfer1::inference::DataType::kFLOAT;
       break;
     case TYPE_FP16:
-      trt_type = nvinfer1::DataType::kHALF;
+      trt_type = nvinfer1::inference::DataType::kHALF;
       break;
     case TYPE_INT8:
-      trt_type = nvinfer1::DataType::kINT8;
+      trt_type = nvinfer1::inference::DataType::kINT8;
       break;
     case TYPE_INT32:
-      trt_type = nvinfer1::DataType::kINT32;
+      trt_type = nvinfer1::inference::DataType::kINT32;
       break;
     case TYPE_BOOL:
-      trt_type = nvinfer1::DataType::kBOOL;
+      trt_type = nvinfer1::inference::DataType::kBOOL;
       break;
     default:
       return std::make_pair(false, trt_type);

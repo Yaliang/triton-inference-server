@@ -54,10 +54,10 @@ MemoryFormat ConvertTrtFmtToFmt(nvinfer1::TensorFormat trt_fmt);
 
 const std::string MemoryFormat_Name(MemoryFormat fmt);
 
-DataType ConvertTrtTypeToDataType(nvinfer1::DataType trt_type);
+inference::DataType ConvertTrtTypeToinference::DataType(nvinfer1::inference::DataType trt_type);
 
-std::pair<bool, nvinfer1::DataType> ConvertDataTypeToTrtType(
-    const DataType& dtype);
+std::pair<bool, nvinfer1::inference::DataType> Convertinference::DataTypeToTrtType(
+    const inference::DataType& dtype);
 
 bool CompareDims(const nvinfer1::Dims& model_dims, const DimsList& dims);
 

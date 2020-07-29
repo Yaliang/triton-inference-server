@@ -405,7 +405,7 @@ AutoFillPlanImpl::InitIOLists()
       std::string input_name{engine_->getBindingName(i)};
       config_input->set_name(input_name.substr(0, input_name.find(" ")));
       config_input->set_data_type(
-          ConvertTrtTypeToDataType(engine_->getBindingDataType(i)));
+          ConvertTrtTypeToinference::DataType(engine_->getBindinginference::DataType(i)));
       InitIODims(dims, is_shape_binding, config_input);
       config_input->set_is_shape_tensor(is_shape_binding);
     } else {
@@ -413,7 +413,7 @@ AutoFillPlanImpl::InitIOLists()
       std::string output_name{engine_->getBindingName(i)};
       config_output->set_name(output_name.substr(0, output_name.find(" ")));
       config_output->set_data_type(
-          ConvertTrtTypeToDataType(engine_->getBindingDataType(i)));
+          ConvertTrtTypeToinference::DataType(engine_->getBindinginference::DataType(i)));
       InitIODims(dims, is_shape_binding, config_output);
       config_output->set_is_shape_tensor(is_shape_binding);
     }
@@ -460,7 +460,7 @@ AutoFillPlanImpl::FixIO(
       for (const auto& io_ref : reference_list) {
         if (io.name() == io_ref.name()) {
           // only set type and shape if they are not set
-          if (io.data_type() == DataType::TYPE_INVALID) {
+          if (io.data_type() == inference::DataType::TYPE_INVALID) {
             io.set_data_type(io_ref.data_type());
           }
           if (io.dims_size() == 0) {

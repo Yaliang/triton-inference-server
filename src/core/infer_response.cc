@@ -131,7 +131,7 @@ InferenceResponse::AddParameter(const char* name, const bool value)
 
 Status
 InferenceResponse::AddOutput(
-    const std::string& name, const DataType datatype,
+    const std::string& name, const inference::DataType datatype,
     const std::vector<int64_t>& shape, InferenceResponse::Output** output)
 {
   outputs_.emplace_back(name, datatype, shape, allocator_, alloc_userp_);
@@ -156,7 +156,7 @@ InferenceResponse::AddOutput(
 
 Status
 InferenceResponse::AddOutput(
-    const std::string& name, const DataType datatype,
+    const std::string& name, const inference::DataType datatype,
     std::vector<int64_t>&& shape, InferenceResponse::Output** output)
 {
   outputs_.emplace_back(
@@ -363,7 +363,7 @@ std::ostream&
 operator<<(std::ostream& out, const InferenceResponse::Output& output)
 {
   out << "output: " << output.Name()
-      << ", type: " << DataTypeToProtocolString(output.DType())
+      << ", type: " << inference::DataTypeToProtocolString(output.DType())
       << ", shape: " << DimsListToString(output.Shape());
   return out;
 }

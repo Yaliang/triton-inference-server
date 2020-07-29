@@ -65,76 +65,76 @@ void TRTISTF_IOListDelete(TRTISTF_IOList* list);
 
 namespace {
 
-static TRTISTF_DataType
-ConvertDataType(tensorflow::DataType dtype)
+static TRTISTF_inference::DataType
+Convertinference::DataType(tensorflow::inference::DataType dtype)
 {
   switch (dtype) {
     case tensorflow::DT_INVALID:
-      return TRTISTF_DataType::TRTISTF_TYPE_INVALID;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID;
     case tensorflow::DT_BOOL:
-      return TRTISTF_DataType::TRTISTF_TYPE_BOOL;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_BOOL;
     case tensorflow::DT_UINT8:
-      return TRTISTF_DataType::TRTISTF_TYPE_UINT8;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_UINT8;
     case tensorflow::DT_UINT16:
-      return TRTISTF_DataType::TRTISTF_TYPE_UINT16;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_UINT16;
     case tensorflow::DT_UINT32:
-      return TRTISTF_DataType::TRTISTF_TYPE_UINT32;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_UINT32;
     case tensorflow::DT_UINT64:
-      return TRTISTF_DataType::TRTISTF_TYPE_UINT64;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_UINT64;
     case tensorflow::DT_INT8:
-      return TRTISTF_DataType::TRTISTF_TYPE_INT8;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_INT8;
     case tensorflow::DT_INT16:
-      return TRTISTF_DataType::TRTISTF_TYPE_INT16;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_INT16;
     case tensorflow::DT_INT32:
-      return TRTISTF_DataType::TRTISTF_TYPE_INT32;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_INT32;
     case tensorflow::DT_INT64:
-      return TRTISTF_DataType::TRTISTF_TYPE_INT64;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_INT64;
     case tensorflow::DT_HALF:
-      return TRTISTF_DataType::TRTISTF_TYPE_FP16;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_FP16;
     case tensorflow::DT_FLOAT:
-      return TRTISTF_DataType::TRTISTF_TYPE_FP32;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_FP32;
     case tensorflow::DT_DOUBLE:
-      return TRTISTF_DataType::TRTISTF_TYPE_FP64;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_FP64;
     case tensorflow::DT_STRING:
-      return TRTISTF_DataType::TRTISTF_TYPE_STRING;
+      return TRTISTF_inference::DataType::TRTISTF_TYPE_STRING;
     default:
       break;
   }
 
-  return TRTISTF_DataType::TRTISTF_TYPE_INVALID;
+  return TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID;
 }
 
-tensorflow::DataType
-ConvertDataType(TRTISTF_DataType dtype)
+tensorflow::inference::DataType
+Convertinference::DataType(TRTISTF_inference::DataType dtype)
 {
   switch (dtype) {
-    case TRTISTF_DataType::TRTISTF_TYPE_INVALID:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID:
       return tensorflow::DT_INVALID;
-    case TRTISTF_DataType::TRTISTF_TYPE_BOOL:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_BOOL:
       return tensorflow::DT_BOOL;
-    case TRTISTF_DataType::TRTISTF_TYPE_UINT8:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_UINT8:
       return tensorflow::DT_UINT8;
-    case TRTISTF_DataType::TRTISTF_TYPE_UINT16:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_UINT16:
       return tensorflow::DT_UINT16;
-    case TRTISTF_DataType::TRTISTF_TYPE_UINT32:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_UINT32:
       return tensorflow::DT_UINT32;
-    case TRTISTF_DataType::TRTISTF_TYPE_UINT64:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_UINT64:
       return tensorflow::DT_UINT64;
-    case TRTISTF_DataType::TRTISTF_TYPE_INT8:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_INT8:
       return tensorflow::DT_INT8;
-    case TRTISTF_DataType::TRTISTF_TYPE_INT16:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_INT16:
       return tensorflow::DT_INT16;
-    case TRTISTF_DataType::TRTISTF_TYPE_INT32:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_INT32:
       return tensorflow::DT_INT32;
-    case TRTISTF_DataType::TRTISTF_TYPE_INT64:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_INT64:
       return tensorflow::DT_INT64;
-    case TRTISTF_DataType::TRTISTF_TYPE_FP16:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_FP16:
       return tensorflow::DT_HALF;
-    case TRTISTF_DataType::TRTISTF_TYPE_FP32:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_FP32:
       return tensorflow::DT_FLOAT;
-    case TRTISTF_DataType::TRTISTF_TYPE_FP64:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_FP64:
       return tensorflow::DT_DOUBLE;
-    case TRTISTF_DataType::TRTISTF_TYPE_STRING:
+    case TRTISTF_inference::DataType::TRTISTF_TYPE_STRING:
       return tensorflow::DT_STRING;
     default:
       break;
@@ -185,9 +185,9 @@ PrecisionModeToString(const TRTISTF_TFTRTPrecisionMode m)
 // adapoted from
 // https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/common_runtime/graph_execution_state.cc#L382
 bool
-IsGPUFeedAndFetchSupported(TRTISTF_DataType dtype)
+IsGPUFeedAndFetchSupported(TRTISTF_inference::DataType dtype)
 {
-  switch (ConvertDataType(dtype)) {
+  switch (Convertinference::DataType(dtype)) {
     case tensorflow::DT_BFLOAT16:
     case tensorflow::DT_BOOL:
     case tensorflow::DT_COMPLEX128:
@@ -324,13 +324,13 @@ GetTFGPUDeviceName(
 class TensorImpl {
  public:
   TensorImpl(
-      const char* name, TRTISTF_DataType dtype, TRTISTF_Shape* shape,
+      const char* name, TRTISTF_inference::DataType dtype, TRTISTF_Shape* shape,
       const tensorflow::TensorShape& tfshape, const int tf_gpu_id);
   TensorImpl(tensorflow::Tensor&& tftensor);
   ~TensorImpl();
 
   const std::string& Name() const { return name_; }
-  TRTISTF_DataType DataType() const { return dtype_; }
+  TRTISTF_inference::DataType inference::DataType() const { return dtype_; }
   TRTISTF_Shape* Shape() const { return shape_; }
 
   tensorflow::Tensor& TFTensor() { return tftensor_; }
@@ -346,7 +346,7 @@ class TensorImpl {
   void Init();
 
   const std::string name_;
-  const TRTISTF_DataType dtype_;
+  const TRTISTF_inference::DataType dtype_;
   TRTISTF_Shape* shape_;
 
   tensorflow::Tensor tftensor_;
@@ -357,7 +357,7 @@ class TensorImpl {
 
 
 TensorImpl::TensorImpl(
-    const char* name, TRTISTF_DataType dtype, TRTISTF_Shape* shape,
+    const char* name, TRTISTF_inference::DataType dtype, TRTISTF_Shape* shape,
     const tensorflow::TensorShape& tfshape, const int tf_gpu_id)
     : name_(name), dtype_(dtype), shape_(shape)
 {
@@ -368,15 +368,15 @@ TensorImpl::TensorImpl(
                      1 << 28 /* total_memory_size */)
                : nullptr;
   if (a == nullptr) {
-    tftensor_ = tensorflow::Tensor(ConvertDataType(dtype), tfshape);
+    tftensor_ = tensorflow::Tensor(Convertinference::DataType(dtype), tfshape);
   } else {
-    tftensor_ = tensorflow::Tensor(a, ConvertDataType(dtype), tfshape);
+    tftensor_ = tensorflow::Tensor(a, Convertinference::DataType(dtype), tfshape);
   }
   Init();
 }
 
 TensorImpl::TensorImpl(tensorflow::Tensor&& tftensor)
-    : name_(), dtype_(ConvertDataType(tftensor.dtype())),
+    : name_(), dtype_(Convertinference::DataType(tftensor.dtype())),
       shape_(ConvertShape(tftensor.shape())), tftensor_(std::move(tftensor))
 {
   Init();
@@ -398,7 +398,7 @@ TensorImpl::Init()
   if (tftensor_.dtype() != tensorflow::DT_STRING) {
     auto flat = tftensor_.bit_casted_shaped<char, 1>(
         {tftensor_.NumElements() *
-         tensorflow::DataTypeSize(tftensor_.dtype())});
+         tensorflow::inference::DataTypeSize(tftensor_.dtype())});
     nonstring_base_ = static_cast<char*>(flat.data());
     nonstring_byte_size_ = flat.size();
 
@@ -657,7 +657,7 @@ TRTISTF_IOListNew(
     strcpy(io->inmodel_name_, inmodel_name);
   }
 
-  io->data_type_ = TRTISTF_DataType::TRTISTF_TYPE_INVALID;
+  io->data_type_ = TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID;
   io->shape_ = nullptr;
 
   TRTISTF_IOList* iol = new TRTISTF_IOList;
@@ -718,7 +718,7 @@ TRTISTF_TensorListDelete(TRTISTF_TensorList* list)
 //
 TRTISTF_Tensor*
 TRTISTF_TensorNew(
-    const char* name, TRTISTF_DataType dtype, size_t shape_rank,
+    const char* name, TRTISTF_inference::DataType dtype, size_t shape_rank,
     int64_t* shape_dims, const int tf_gpu_id)
 {
   TRTISTF_Shape* shape = TRTISTF_ShapeNew(shape_rank, shape_dims);
@@ -727,7 +727,7 @@ TRTISTF_TensorNew(
 
   TensorImpl* tensor = new TensorImpl(name, dtype, shape, tfshape, tf_gpu_id);
   // If data type is non-string, make sure TensorImpl contains valid TF tensor
-  if (dtype != TRTISTF_DataType::TRTISTF_TYPE_STRING) {
+  if (dtype != TRTISTF_inference::DataType::TRTISTF_TYPE_STRING) {
     // tensor's byte size is set to value required and it is independent to
     // the data pointer. So make sure data is not nullptr if byte size > 0
     if ((tensor->ByteSize() != 0) && (tensor->Base() == nullptr)) {
@@ -738,18 +738,18 @@ TRTISTF_TensorNew(
   return reinterpret_cast<TRTISTF_Tensor*>(tensor);
 }
 
-TRTISTF_DataType
-TRTISTF_TensorDataType(TRTISTF_Tensor* tensor)
+TRTISTF_inference::DataType
+TRTISTF_Tensorinference::DataType(TRTISTF_Tensor* tensor)
 {
   TensorImpl* t = reinterpret_cast<TensorImpl*>(tensor);
-  return t->DataType();
+  return t->inference::DataType();
 }
 
 int64_t
-TRTISTF_TensorDataTypeByteSize(TRTISTF_Tensor* tensor)
+TRTISTF_Tensorinference::DataTypeByteSize(TRTISTF_Tensor* tensor)
 {
   TensorImpl* t = reinterpret_cast<TensorImpl*>(tensor);
-  return tensorflow::DataTypeSize(t->TFTensor().dtype());
+  return tensorflow::inference::DataTypeSize(t->TFTensor().dtype());
 }
 
 TRTISTF_Shape*
@@ -984,12 +984,12 @@ TRTISTF_ModelCreateFromSavedModel(
         TRTISTF_IOListNew(sin.first.c_str(), sin.second.name().c_str(), inputs);
     TRTISTF_IO* io = inputs->io_;
 
-    const TRTISTF_DataType dt = ConvertDataType(sin.second.dtype());
-    if (dt == TRTISTF_DataType::TRTISTF_TYPE_INVALID) {
+    const TRTISTF_inference::DataType dt = Convertinference::DataType(sin.second.dtype());
+    if (dt == TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID) {
       return TRTISTF_ErrorNew(
           "unable to process input '" + std::string(io->name_) + "' for '" +
           std::string(model_name) + "', unsupported datatype '" +
-          tensorflow::DataType_Name(sin.second.dtype()) + "'");
+          tensorflow::inference::DataType_Name(sin.second.dtype()) + "'");
     }
 
     io->data_type_ = dt;
@@ -1010,12 +1010,12 @@ TRTISTF_ModelCreateFromSavedModel(
         sout.first.c_str(), sout.second.name().c_str(), outputs);
     TRTISTF_IO* io = outputs->io_;
 
-    const TRTISTF_DataType dt = ConvertDataType(sout.second.dtype());
-    if (dt == TRTISTF_DataType::TRTISTF_TYPE_INVALID) {
+    const TRTISTF_inference::DataType dt = Convertinference::DataType(sout.second.dtype());
+    if (dt == TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID) {
       return TRTISTF_ErrorNew(
           "unable to process output '" + std::string(io->name_) + "' for '" +
           std::string(model_name) + "', unsupported datatype '" +
-          tensorflow::DataType_Name(sout.second.dtype()) + "'");
+          tensorflow::inference::DataType_Name(sout.second.dtype()) + "'");
     }
 
     io->data_type_ = dt;
@@ -1071,8 +1071,8 @@ TRTISTF_ModelOutputs(TRTISTF_Model* model)
 TRTISTF_Error*
 TRTISTF_ModelMakeCallable(
     TRTISTF_Model* model, const char** input_names,
-    const TRTISTF_DataType* input_types, const size_t num_inputs,
-    const char** output_names, const TRTISTF_DataType* output_types,
+    const TRTISTF_inference::DataType* input_types, const size_t num_inputs,
+    const char** output_names, const TRTISTF_inference::DataType* output_types,
     const size_t num_outputs)
 {
   ModelImpl* m = reinterpret_cast<ModelImpl*>(model);

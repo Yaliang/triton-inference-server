@@ -172,7 +172,7 @@ class CustomBackend : public InferenceBackend {
     // V1/V2 API doesn't require the backend to indicate an output
     // datatype so we need to use the datatype from the model
     // configuration.
-    std::unordered_map<std::string, DataType> output_datatypes_;
+    std::unordered_map<std::string, inference::DataType> output_datatypes_;
 
     // The current device from last model execution. Use to ensure invariant
     // from custom backend's point of view.

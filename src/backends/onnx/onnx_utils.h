@@ -49,12 +49,12 @@ extern const OrtApi* ort_api;
   } while (false)
 
 struct OnnxTensorInfo {
-  OnnxTensorInfo(ONNXTensorElementDataType type, std::vector<int64_t> dims)
+  OnnxTensorInfo(ONNXTensorElementinference::DataType type, std::vector<int64_t> dims)
       : type_(type), dims_(dims)
   {
   }
 
-  ONNXTensorElementDataType type_;
+  ONNXTensorElementinference::DataType type_;
   std::vector<int64_t> dims_;
 };
 
@@ -75,11 +75,11 @@ class OrtResourceWrapper {
 
 using OnnxTensorInfoMap = std::unordered_map<std::string, OnnxTensorInfo>;
 
-std::string OnnxDataTypeName(ONNXTensorElementDataType onnx_type);
+std::string Onnxinference::DataTypeName(ONNXTensorElementinference::DataType onnx_type);
 
-DataType ConvertFromOnnxDataType(ONNXTensorElementDataType onnx_type);
+inference::DataType ConvertFromOnnxinference::DataType(ONNXTensorElementinference::DataType onnx_type);
 
-ONNXTensorElementDataType ConvertToOnnxDataType(DataType data_type);
+ONNXTensorElementinference::DataType ConvertToOnnxinference::DataType(inference::DataType data_type);
 
 Status InputNames(OrtSession* session, std::set<std::string>& names);
 

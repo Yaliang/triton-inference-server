@@ -84,7 +84,7 @@ class LibTorchBackend : public InferenceBackend {
 
     // Set the meta data of an input from payloads.
     Status SetInputMetaData(
-        const std::string& name, const DataType datatype,
+        const std::string& name, const inference::DataType datatype,
         const std::vector<int64_t>& dims, InputMetaData* meta_data);
 
     // See BackendContext::Run()
@@ -115,7 +115,7 @@ class LibTorchBackend : public InferenceBackend {
 
     Status GetOutputTensor(
         std::vector<torch::Tensor>* outputs_, const int& op_index,
-        const std::string& name, const DataType dtype, const char** content,
+        const std::string& name, const inference::DataType dtype, const char** content,
         size_t* byte_size, std::vector<int64_t>* content_shape);
 
     Status Execute(

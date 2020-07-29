@@ -150,7 +150,7 @@ namespace {
 
 Status
 GetBooleanOverrideInputs(
-    const std::string& tensor_name, const DataType tensor_datatype,
+    const std::string& tensor_name, const inference::DataType tensor_datatype,
     const float fp32_false_value, const float fp32_true_value,
     const int32_t int32_false_value, const int32_t int32_true_value,
     std::shared_ptr<InferenceRequest::Input>* true_override,
@@ -160,7 +160,7 @@ GetBooleanOverrideInputs(
   int64_t memory_type_id;
 
   const std::vector<int64_t> tensor_shape{1};
-  const size_t size_p = GetDataTypeByteSize(tensor_datatype);
+  const size_t size_p = Getinference::DataTypeByteSize(tensor_datatype);
 
   auto true_p =
       std::make_shared<AllocatedMemory>(size_p, TRITONSERVER_MEMORY_CPU, 0);
@@ -186,7 +186,7 @@ GetBooleanOverrideInputs(
         "failed to allocate sequence control signal in CPU memory");
   }
 
-  if (tensor_datatype == DataType::TYPE_INT32) {
+  if (tensor_datatype == inference::DataType::TYPE_INT32) {
     *(reinterpret_cast<int32_t*>(true_p_ptr)) = int32_true_value;
     *(reinterpret_cast<int32_t*>(false_p_ptr)) = int32_false_value;
   } else {
@@ -230,7 +230,7 @@ SequenceBatchScheduler::CreateBooleanControlTensors(
   *notready_input_overrides = std::make_shared<ControlInputs>();
 
   std::string tensor_name;
-  DataType tensor_datatype;
+  inference::DataType tensor_datatype;
   int32_t int32_false_value, int32_true_value;
   float fp32_false_value, fp32_true_value;
 
@@ -683,7 +683,7 @@ SequenceBatch::CreateCorrelationIDControl(const ModelConfig& config)
   // tensor and initialize the override structure for each sequence
   // slot that is used to communicate the correlation ID.
   std::string correlation_id_tensor_name;
-  DataType correlation_id_datatype;
+  inference::DataType correlation_id_datatype;
   Status corrid_status = GetTypedSequenceControlProperties(
       config.sequence_batching(), config.name(),
       ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID,
@@ -710,7 +710,7 @@ SequenceBatch::CreateCorrelationIDControl(const ModelConfig& config)
     }
 
     const std::vector<int64_t> tensor_shape{1};
-    const size_t size_p = GetDataTypeByteSize(correlation_id_datatype);
+    const size_t size_p = Getinference::DataTypeByteSize(correlation_id_datatype);
 
     for (size_t b = 0; b < seq_slot_cnt_; ++b) {
       TRITONSERVER_MemoryType memory_type;

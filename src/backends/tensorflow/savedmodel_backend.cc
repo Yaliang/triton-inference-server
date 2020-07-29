@@ -148,14 +148,14 @@ SavedModelBackend::CreateTRTISTFModel(
       }
     }
 
-    if (!CompareDataType(input->data_type_, io.data_type())) {
+    if (!Compareinference::DataType(input->data_type_, io.data_type())) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + Name() + "', input '" + io.name() +
               "' data-type " +
-              DataType_Name(ConvertDataType(input->data_type_)) +
+              inference::DataType_Name(Convertinference::DataType(input->data_type_)) +
               " doesn't match configuration data-type " +
-              DataType_Name(io.data_type()));
+              inference::DataType_Name(io.data_type()));
     }
   }
 
@@ -191,14 +191,14 @@ SavedModelBackend::CreateTRTISTFModel(
       }
     }
 
-    if (!CompareDataType(output->data_type_, io.data_type())) {
+    if (!Compareinference::DataType(output->data_type_, io.data_type())) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + Name() + "', output '" + io.name() +
               "' data-type " +
-              DataType_Name(ConvertDataType(output->data_type_)) +
+              inference::DataType_Name(Convertinference::DataType(output->data_type_)) +
               " doesn't match configuration data-type " +
-              DataType_Name(io.data_type()));
+              inference::DataType_Name(io.data_type()));
     }
   }
 
@@ -211,7 +211,7 @@ SavedModelBackend::ValidateBooleanSequenceControl(
     const TRTISTF_IOList* inputs, bool required, bool* have_control)
 {
   std::string tensor_name;
-  DataType tensor_datatype;
+  inference::DataType tensor_datatype;
   RETURN_IF_ERROR(GetBooleanSequenceControlProperties(
       Config().sequence_batching(), Name(), control_kind, required,
       &tensor_name, &tensor_datatype, nullptr, nullptr, nullptr, nullptr));
@@ -239,14 +239,14 @@ SavedModelBackend::ValidateBooleanSequenceControl(
                                          "': " + compare_status.Message());
     }
 
-    if (!CompareDataType(input->data_type_, tensor_datatype)) {
+    if (!Compareinference::DataType(input->data_type_, tensor_datatype)) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + Name() + "', sequence control '" +
               tensor_name + "': the model expects data-type " +
-              DataType_Name(ConvertDataType(input->data_type_)) +
+              inference::DataType_Name(Convertinference::DataType(input->data_type_)) +
               " but the model configuration specifies data-type " +
-              DataType_Name(tensor_datatype));
+              inference::DataType_Name(tensor_datatype));
     }
   }
 
@@ -259,7 +259,7 @@ SavedModelBackend::ValidateTypedSequenceControl(
     const TRTISTF_IOList* inputs, bool required, bool* have_control)
 {
   std::string tensor_name;
-  DataType tensor_datatype;
+  inference::DataType tensor_datatype;
   RETURN_IF_ERROR(GetTypedSequenceControlProperties(
       Config().sequence_batching(), Name(), control_kind, required,
       &tensor_name, &tensor_datatype));
@@ -287,14 +287,14 @@ SavedModelBackend::ValidateTypedSequenceControl(
                                          "': " + compare_status.Message());
     }
 
-    if (!CompareDataType(input->data_type_, tensor_datatype)) {
+    if (!Compareinference::DataType(input->data_type_, tensor_datatype)) {
       return Status(
           Status::Code::INVALID_ARG,
           "unable to load model '" + Name() + "', sequence control '" +
               tensor_name + "', the model expects data-type " +
-              DataType_Name(ConvertDataType(input->data_type_)) +
+              inference::DataType_Name(Convertinference::DataType(input->data_type_)) +
               " but the model configuration specifies data-type " +
-              DataType_Name(tensor_datatype));
+              inference::DataType_Name(tensor_datatype));
     }
   }
 

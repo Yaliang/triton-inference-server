@@ -658,10 +658,10 @@ PlanBackend::Context::ValidateInputs(
     const std::set<std::string>& allowed_shape_tensors)
 {
   for (const auto& io : ios) {
-    if (!ConvertDataTypeToTrtType(io.data_type()).first) {
+    if (!Convertinference::DataTypeToTrtType(io.data_type()).first) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for input '" + io.name() + "' for model '" + name_ + "'");
     }
 
@@ -695,10 +695,10 @@ PlanBackend::Context::ValidateOutputs(
     const std::set<std::string>& allowed_shape_tensors)
 {
   for (const auto& io : ios) {
-    if (!ConvertDataTypeToTrtType(io.data_type()).first) {
+    if (!Convertinference::DataTypeToTrtType(io.data_type()).first) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for output '" + io.name() + "' for model '" + name_ + "'");
     }
 
@@ -727,7 +727,7 @@ PlanBackend::Context::ValidateOutputs(
 
 Status
 PlanBackend::Context::InitializeShapeInputBinding(
-    const std::string& input_name, const DataType input_datatype,
+    const std::string& input_name, const inference::DataType input_datatype,
     const DimsList& model_config_dims)
 {
   // the maximum byte sizes across all profiles
@@ -768,19 +768,19 @@ PlanBackend::Context::InitializeShapeInputBinding(
     if (input_datatype != TYPE_INT32) {
       return Status(
           Status::Code::INVALID_ARG,
-          "unexpected datatype " + DataType_Name(input_datatype) +
+          "unexpected datatype " + inference::DataType_Name(input_datatype) +
               "  in model configuration for shape input '" + input_name +
-              "', expecting " + DataType_Name(TYPE_INT32) + " for " + name_);
+              "', expecting " + inference::DataType_Name(TYPE_INT32) + " for " + name_);
     }
 
-    DataType dt =
-        ConvertTrtTypeToDataType(engine_->getBindingDataType(binding_index));
+    inference::DataType dt =
+        ConvertTrtTypeToinference::DataType(engine_->getBindinginference::DataType(binding_index));
     if (dt != input_datatype) {
       return Status(
           Status::Code::INVALID_ARG,
-          "unexpected datatype " + DataType_Name(dt) +
+          "unexpected datatype " + inference::DataType_Name(dt) +
               " in engine for shape input '" + input_name + "', expecting " +
-              DataType_Name(input_datatype) + " for " + name_);
+              inference::DataType_Name(input_datatype) + " for " + name_);
     }
 
     MemoryFormat fmt =
@@ -870,7 +870,7 @@ PlanBackend::Context::InitializeShapeInputBinding(
 
 Status
 PlanBackend::Context::InitializeExecuteInputBinding(
-    const std::string& input_name, const DataType input_datatype,
+    const std::string& input_name, const inference::DataType input_datatype,
     const DimsList& model_config_dims, const bool is_control)
 {
   // the maximum byte sizes across all profiles
@@ -905,13 +905,13 @@ PlanBackend::Context::InitializeExecuteInputBinding(
               "' is expected to be an output in model for " + name_);
     }
 
-    DataType dt =
-        ConvertTrtTypeToDataType(engine_->getBindingDataType(binding_index));
+    inference::DataType dt =
+        ConvertTrtTypeToinference::DataType(engine_->getBindinginference::DataType(binding_index));
     if (dt != input_datatype) {
       return Status(
           Status::Code::INVALID_ARG,
-          "unexpected datatype " + DataType_Name(dt) + " for input '" +
-              input_name + "', expecting " + DataType_Name(input_datatype) +
+          "unexpected datatype " + inference::DataType_Name(dt) + " for input '" +
+              input_name + "', expecting " + inference::DataType_Name(input_datatype) +
               " for " + name_);
     }
 
@@ -1047,7 +1047,7 @@ PlanBackend::Context::InitializeSequenceControlInputBindings(
       const bool required = false;
 
       std::string tensor_name;
-      DataType tensor_datatype;
+      inference::DataType tensor_datatype;
       RETURN_IF_ERROR(GetBooleanSequenceControlProperties(
           config.sequence_batching(), config.name(), control_kind, required,
           &tensor_name, &tensor_datatype, nullptr, nullptr, nullptr, nullptr));
@@ -1069,7 +1069,7 @@ PlanBackend::Context::InitializeSequenceControlInputBindings(
       const bool required = false;
 
       std::string tensor_name;
-      DataType tensor_datatype;
+      inference::DataType tensor_datatype;
       RETURN_IF_ERROR(GetTypedSequenceControlProperties(
           config.sequence_batching(), config.name(), control_kind, required,
           &tensor_name, &tensor_datatype));
@@ -1157,19 +1157,19 @@ PlanBackend::Context::InitializeConfigShapeOutputBindings(
       if (io.data_type() != TYPE_INT32) {
         return Status(
             Status::Code::INVALID_ARG,
-            "unexpected datatype " + DataType_Name(io.data_type()) +
+            "unexpected datatype " + inference::DataType_Name(io.data_type()) +
                 "  in model configuration for shape output '" + io.name() +
-                "', expecting " + DataType_Name(TYPE_INT32) + " for " + name_);
+                "', expecting " + inference::DataType_Name(TYPE_INT32) + " for " + name_);
       }
 
-      DataType dt =
-          ConvertTrtTypeToDataType(engine_->getBindingDataType(binding_index));
+      inference::DataType dt =
+          ConvertTrtTypeToinference::DataType(engine_->getBindinginference::DataType(binding_index));
       if (dt != io.data_type()) {
         return Status(
             Status::Code::INVALID_ARG,
-            "unexpected datatype " + DataType_Name(dt) +
+            "unexpected datatype " + inference::DataType_Name(dt) +
                 " for inference output '" + io.name() + "', expecting " +
-                DataType_Name(io.data_type()) + " for " + name_);
+                inference::DataType_Name(io.data_type()) + " for " + name_);
       }
 
       MemoryFormat fmt =
@@ -1266,14 +1266,14 @@ PlanBackend::Context::InitializeConfigExecuteOutputBindings(
                 "' is expected to be an input in model for " + name_);
       }
 
-      DataType dt =
-          ConvertTrtTypeToDataType(engine_->getBindingDataType(binding_index));
+      inference::DataType dt =
+          ConvertTrtTypeToinference::DataType(engine_->getBindinginference::DataType(binding_index));
       if (dt != io.data_type()) {
         return Status(
             Status::Code::INVALID_ARG,
-            "unexpected datatype " + DataType_Name(dt) +
+            "unexpected datatype " + inference::DataType_Name(dt) +
                 " for inference output '" + io.name() + "', expecting " +
-                DataType_Name(io.data_type()) + " for " + name_);
+                inference::DataType_Name(io.data_type()) + " for " + name_);
       }
 
       MemoryFormat fmt =
@@ -1807,7 +1807,7 @@ PlanBackend::Context::Run(
     }
     batchn_shape.insert(
         batchn_shape.end(), batch1_shape.begin(), batch1_shape.end());
-    const DataType datatype = repr_input->DType();
+    const inference::DataType datatype = repr_input->DType();
 
     const size_t total_byte_size = GetByteSize(datatype, batchn_shape);
 
@@ -2037,8 +2037,8 @@ PlanBackend::Context::Run(
 
           const size_t tensor_element_cnt = GetElementCount(batchn_shape);
 
-          DataType dt = ConvertTrtTypeToDataType(
-              engine_->getBindingDataType(binding_offset + bindex));
+          inference::DataType dt = ConvertTrtTypeToinference::DataType(
+              engine_->getBindinginference::DataType(binding_offset + bindex));
 
           // Only need an response tensor for requested outputs.
           if ((response != nullptr) &&
@@ -2065,8 +2065,8 @@ PlanBackend::Context::Run(
         batchn_shape.push_back(dims.d[i]);
       }
 
-      DataType dt = ConvertTrtTypeToDataType(
-          engine_->getBindingDataType(binding_offset + bindex));
+      inference::DataType dt = ConvertTrtTypeToinference::DataType(
+          engine_->getBindinginference::DataType(binding_offset + bindex));
 
       size_t batch1_byte_size = GetByteSize(dt, batchn_shape);
       if (support_batching_) {
@@ -2271,7 +2271,7 @@ PlanBackend::Context::GetRequestShapeValues(
       // Shape tensors datatype is INT32.
       const int64_t element_cnt = GetElementCount(batch1_shape);
       const size_t expected_byte_size =
-          element_cnt * GetDataTypeByteSize(DataType::TYPE_INT32);
+          element_cnt * Getinference::DataTypeByteSize(inference::DataType::TYPE_INT32);
 
       if (expected_byte_size != data_byte_size) {
         return Status(

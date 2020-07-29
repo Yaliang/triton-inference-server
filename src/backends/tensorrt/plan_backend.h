@@ -93,10 +93,10 @@ class PlanBackend : public InferenceBackend {
         const std::set<std::string>& allowed_shape_tensors);
 
     Status InitializeExecuteInputBinding(
-        const std::string& input_name, const DataType input_datatype,
+        const std::string& input_name, const inference::DataType input_datatype,
         const DimsList& input_dims, const bool is_control = false);
     Status InitializeShapeInputBinding(
-        const std::string& input_name, const DataType input_datatype,
+        const std::string& input_name, const inference::DataType input_datatype,
         const DimsList& input_dims);
     Status InitializeSequenceControlInputBindings(const ModelConfig& config);
     Status InitializeConfigExecuteInputBindings(

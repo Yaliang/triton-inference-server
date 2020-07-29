@@ -224,8 +224,8 @@ AutoFillSavedModelImpl::FixIOConfig(
     config_io->set_name(io->name_);
 
     // only set type and shape if they are not set
-    if (config_io->data_type() == DataType::TYPE_INVALID) {
-      config_io->set_data_type(ConvertDataType(io->data_type_));
+    if (config_io->data_type() == inference::DataType::TYPE_INVALID) {
+      config_io->set_data_type(Convertinference::DataType(io->data_type_));
     }
     if (config_io->dims_size() == 0) {
       // The model signature supports batching then the first

@@ -44,34 +44,34 @@ namespace {
 // Convert model datatype to non-protobuf equivalent datatype required
 // by Caffe2Workspace.
 Caffe2Workspace::DataType
-ConvertDataType(DataType dtype)
+Convertinference::DataType(inference::DataType dtype)
 {
   switch (dtype) {
-    case DataType::TYPE_INVALID:
+    case inference::DataType::TYPE_INVALID:
       return Caffe2Workspace::DataType::TYPE_INVALID;
-    case DataType::TYPE_BOOL:
+    case inference::DataType::TYPE_BOOL:
       return Caffe2Workspace::DataType::TYPE_BOOL;
-    case DataType::TYPE_UINT8:
+    case inference::DataType::TYPE_UINT8:
       return Caffe2Workspace::DataType::TYPE_UINT8;
-    case DataType::TYPE_UINT16:
+    case inference::DataType::TYPE_UINT16:
       return Caffe2Workspace::DataType::TYPE_UINT16;
-    case DataType::TYPE_UINT32:
+    case inference::DataType::TYPE_UINT32:
       return Caffe2Workspace::DataType::TYPE_UINT32;
-    case DataType::TYPE_UINT64:
+    case inference::DataType::TYPE_UINT64:
       return Caffe2Workspace::DataType::TYPE_UINT64;
-    case DataType::TYPE_INT8:
+    case inference::DataType::TYPE_INT8:
       return Caffe2Workspace::DataType::TYPE_INT8;
-    case DataType::TYPE_INT16:
+    case inference::DataType::TYPE_INT16:
       return Caffe2Workspace::DataType::TYPE_INT16;
-    case DataType::TYPE_INT32:
+    case inference::DataType::TYPE_INT32:
       return Caffe2Workspace::DataType::TYPE_INT32;
-    case DataType::TYPE_INT64:
+    case inference::DataType::TYPE_INT64:
       return Caffe2Workspace::DataType::TYPE_INT64;
-    case DataType::TYPE_FP16:
+    case inference::DataType::TYPE_FP16:
       return Caffe2Workspace::DataType::TYPE_FP16;
-    case DataType::TYPE_FP32:
+    case inference::DataType::TYPE_FP32:
       return Caffe2Workspace::DataType::TYPE_FP32;
-    case DataType::TYPE_FP64:
+    case inference::DataType::TYPE_FP64:
       return Caffe2Workspace::DataType::TYPE_FP64;
     default:
       break;
@@ -322,11 +322,11 @@ NetDefBackend::Context::ValidateInputs(
           CheckAllowedModelInput(io, workspace_->PotentialInputNames()));
     }
 
-    if (ConvertDataType(io.data_type()) ==
+    if (Convertinference::DataType(io.data_type()) ==
         Caffe2Workspace::DataType::TYPE_INVALID) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for input '" + io.name() + "' for model '" + name_ + "'");
     }
   }
@@ -346,11 +346,11 @@ NetDefBackend::Context::ValidateOutputs(
           CheckAllowedModelOutput(io, workspace_->PotentialOutputNames()));
     }
 
-    if (ConvertDataType(io.data_type()) ==
+    if (Convertinference::DataType(io.data_type()) ==
         Caffe2Workspace::DataType::TYPE_INVALID) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for output '" + io.name() + "' for model '" + name_ + "'");
     }
   }
@@ -378,7 +378,7 @@ NetDefBackend::Context::ReadOutputTensors(
     // Checked at initialization time to make sure that STRING is not
     // being used for an output, so can just assume fixed-sized here.
     const Caffe2Workspace::DataType dtype =
-        ConvertDataType(output_config->data_type());
+        Convertinference::DataType(output_config->data_type());
 
     const char* output_buffer = nullptr;
     size_t byte_size = 0;
@@ -429,11 +429,11 @@ NetDefBackend::Context::SetInputTensors(
     }
     batchn_shape.insert(
         batchn_shape.end(), batch1_shape.begin(), batch1_shape.end());
-    const DataType datatype = repr_input->DType();
+    const inference::DataType datatype = repr_input->DType();
 
     // Checked at initialization time to make sure that STRING is not
     // being used for an input, so can just assume fixed-sized here.
-    const Caffe2Workspace::DataType dtype = ConvertDataType(datatype);
+    const Caffe2Workspace::DataType dtype = Convertinference::DataType(datatype);
 
     // The entire input tensor must be delivered as a single
     // contiguous chunk so create a buffer large enough to hold the

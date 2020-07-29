@@ -117,7 +117,7 @@ int64_t GetElementCount(const ModelOutput& mio);
 /// \param dtype The data-type.
 /// \return True if datatype values are fixed-sized, false if
 /// variable-sized.
-bool IsFixedSizeDataType(const DataType dtype);
+bool IsFixedSizeinference::DataType(const inference::DataType dtype);
 
 /// Get the size of objects of a given datatype in bytes.
 /// \param dtype The data-type.
@@ -125,7 +125,7 @@ bool IsFixedSizeDataType(const DataType dtype);
 /// size cannot be determine (for example, values of type TYPE_STRING
 /// have variable length and so size cannot be determine just from the
 /// type).
-size_t GetDataTypeByteSize(const DataType dtype);
+size_t Getinference::DataTypeByteSize(const inference::DataType dtype);
 
 /// Get the size, in bytes, of a tensor based on datatype and
 /// shape.
@@ -133,7 +133,7 @@ size_t GetDataTypeByteSize(const DataType dtype);
 /// \param dims The shape.
 /// \return The size, in bytes, of the corresponding tensor, or -1 if
 /// unable to determine the size.
-int64_t GetByteSize(const DataType& dtype, const DimsList& dims);
+int64_t GetByteSize(const inference::DataType& dtype, const DimsList& dims);
 
 /// Get the size, in bytes, of a tensor based on datatype and
 /// shape.
@@ -141,7 +141,7 @@ int64_t GetByteSize(const DataType& dtype, const DimsList& dims);
 /// \param dims The shape.
 /// \return The size, in bytes, of the corresponding tensor, or -1 if
 /// unable to determine the size.
-int64_t GetByteSize(const DataType& dtype, const std::vector<int64_t>& dims);
+int64_t GetByteSize(const inference::DataType& dtype, const std::vector<int64_t>& dims);
 
 /// Get the size, in bytes, of a tensor based on batch-size, datatype
 /// and shape. A tensor that has empty shape [] and non-zero
@@ -153,7 +153,7 @@ int64_t GetByteSize(const DataType& dtype, const std::vector<int64_t>& dims);
 /// \return The size, in bytes, of the corresponding tensor, or -1 if
 /// unable to determine the size.
 int64_t GetByteSize(
-    const int batch_size, const DataType& dtype, const DimsList& dims);
+    const int batch_size, const inference::DataType& dtype, const DimsList& dims);
 
 /// Get the size, in bytes, of a tensor based on batch-size, datatype
 /// and shape. A tensor that has empty shape [] and non-zero
@@ -165,7 +165,7 @@ int64_t GetByteSize(
 /// \return The size, in bytes, of the corresponding tensor, or -1 if
 /// unable to determine the size.
 int64_t GetByteSize(
-    const int batch_size, const DataType& dtype,
+    const int batch_size, const inference::DataType& dtype,
     const std::vector<int64_t>& dims);
 
 /// Get the size, in bytes, of a tensor based on ModelInput.
@@ -248,29 +248,29 @@ std::string DimsListToString(
 /// Get the server protocol string representation of a datatype.
 /// \param dtype The data type.
 /// \return The string representation.
-const char* DataTypeToProtocolString(const DataType dtype);
+const char* inference::DataTypeToProtocolString(const inference::DataType dtype);
 
 /// Get the datatype corresponding to a server protocol string
 /// representation of a datatype.
 /// \param dtype string representation.
 /// \return The data type.
-DataType ProtocolStringToDataType(const std::string& dtype);
+inference::DataType ProtocolStringToinference::DataType(const std::string& dtype);
 
 /// Get the datatype corresponding to a server protocol string
 /// representation of a datatype.
 /// \param dtype Pointer to string.
 /// \param len Length of the string.
 /// \return The data type.
-DataType ProtocolStringToDataType(const char* dtype, size_t len);
+inference::DataType ProtocolStringToinference::DataType(const char* dtype, size_t len);
 
 /// Get the Triton server data type corresponding to a data type.
 /// \param dtype The data type.
 /// \return The Triton server data type.
-TRITONSERVER_DataType DataTypeToTriton(const DataType dtype);
+TRITONSERVER_inference::DataType inference::DataTypeToTriton(const inference::DataType dtype);
 
 /// Get the data type corresponding to a Triton server data type.
 /// \param dtype The Triton server data type.
 /// \return The data type.
-DataType TritonToDataType(const TRITONSERVER_DataType dtype);
+inference::DataType TritonToinference::DataType(const TRITONSERVER_inference::DataType dtype);
 
 }}  // namespace nvidia::inferenceserver

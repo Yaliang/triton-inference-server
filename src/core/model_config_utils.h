@@ -46,7 +46,7 @@ Status GetModelVersionFromPath(const std::string& path, int64_t* version);
 Status GetBooleanSequenceControlProperties(
     const ModelSequenceBatching& batcher, const std::string& model_name,
     const ModelSequenceBatching::Control::Kind control_kind,
-    const bool required, std::string* tensor_name, DataType* tensor_datatype,
+    const bool required, std::string* tensor_name, inference::DataType* tensor_datatype,
     float* fp32_false_value, float* fp32_true_value, int32_t* int32_false_value,
     int32_t* int32_true_value);
 
@@ -59,7 +59,7 @@ Status GetBooleanSequenceControlProperties(
 Status GetTypedSequenceControlProperties(
     const ModelSequenceBatching& batcher, const std::string& model_name,
     const ModelSequenceBatching::Control::Kind control_kind,
-    const bool required, std::string* tensor_name, DataType* tensor_datatype);
+    const bool required, std::string* tensor_name, inference::DataType* tensor_datatype);
 
 /// Read a ModelConfig and normalize it as expected by model backends.
 /// \param path The full-path to the directory containing the

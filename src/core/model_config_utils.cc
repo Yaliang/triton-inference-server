@@ -268,7 +268,7 @@ ValidateIOShape(
         Status::Code::INVALID_ARG, message_prefix + "must specify 'name'");
   }
 
-  if (io.data_type() == DataType::TYPE_INVALID) {
+  if (io.data_type() == inference::DataType::TYPE_INVALID) {
     return Status(
         Status::Code::INVALID_ARG, "model output must specify 'data_type'");
   }
@@ -398,7 +398,7 @@ Status
 GetBooleanSequenceControlProperties(
     const ModelSequenceBatching& batcher, const std::string& model_name,
     const ModelSequenceBatching::Control::Kind control_kind,
-    const bool required, std::string* tensor_name, DataType* tensor_datatype,
+    const bool required, std::string* tensor_name, inference::DataType* tensor_datatype,
     float* fp32_false_value, float* fp32_true_value, int32_t* int32_false_value,
     int32_t* int32_true_value)
 {
@@ -458,7 +458,7 @@ GetBooleanSequenceControlProperties(
           }
 
           if (tensor_datatype != nullptr) {
-            *tensor_datatype = DataType::TYPE_INT32;
+            *tensor_datatype = inference::DataType::TYPE_INT32;
           }
           if (int32_false_value != nullptr) {
             *int32_false_value = c.int32_false_true(0);
@@ -486,7 +486,7 @@ GetBooleanSequenceControlProperties(
           }
 
           if (tensor_datatype != nullptr) {
-            *tensor_datatype = DataType::TYPE_FP32;
+            *tensor_datatype = inference::DataType::TYPE_FP32;
           }
           if (fp32_false_value != nullptr) {
             *fp32_false_value = c.fp32_false_true(0);
@@ -518,7 +518,7 @@ Status
 GetTypedSequenceControlProperties(
     const ModelSequenceBatching& batcher, const std::string& model_name,
     const ModelSequenceBatching::Control::Kind control_kind,
-    const bool required, std::string* tensor_name, DataType* tensor_datatype)
+    const bool required, std::string* tensor_name, inference::DataType* tensor_datatype)
 {
   // Make sure same tensor is not configured for multiple controls
   std::set<std::string> seen_tensors;
@@ -959,7 +959,7 @@ ValidateModelConfig(
         nullptr));
 
     // Check CORRID control and make sure it is one of the allowed types.
-    DataType tensor_datatype;
+    inference::DataType tensor_datatype;
     RETURN_IF_ERROR(GetTypedSequenceControlProperties(
         batcher, config.name(),
         ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID,

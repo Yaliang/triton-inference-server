@@ -315,14 +315,14 @@ BaseBackend::CreateExecutionContext(
     const size_t num_inputs = Config().input_size();
     const size_t num_outputs = Config().output_size();
     std::vector<const char*> input_names, output_names;
-    std::vector<TRTISTF_DataType> input_types, output_types;
+    std::vector<TRTISTF_inference::DataType> input_types, output_types;
     for (const auto& io : Config().input()) {
       input_names.push_back(io.name().c_str());
-      input_types.push_back(ConvertDataType(io.data_type()));
+      input_types.push_back(Convertinference::DataType(io.data_type()));
     }
     for (const auto& io : Config().output()) {
       output_names.push_back(io.name().c_str());
-      output_types.push_back(ConvertDataType(io.data_type()));
+      output_types.push_back(Convertinference::DataType(io.data_type()));
     }
     TRTISTF_ModelMakeCallable(
         context->trtistf_model_.get(), input_names.data(), input_types.data(),
@@ -337,11 +337,11 @@ BaseBackend::Context::ValidateInputs(
     const ::google::protobuf::RepeatedPtrField<ModelInput>& ios)
 {
   for (const auto& io : ios) {
-    if (ConvertDataType(io.data_type()) ==
-        TRTISTF_DataType::TRTISTF_TYPE_INVALID) {
+    if (Convertinference::DataType(io.data_type()) ==
+        TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for input '" + io.name() + "' for model '" + name_ + "'");
     }
   }
@@ -354,11 +354,11 @@ BaseBackend::Context::ValidateOutputs(
     const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios)
 {
   for (const auto& io : ios) {
-    if (ConvertDataType(io.data_type()) ==
-        TRTISTF_DataType::TRTISTF_TYPE_INVALID) {
+    if (Convertinference::DataType(io.data_type()) ==
+        TRTISTF_inference::DataType::TRTISTF_TYPE_INVALID) {
       return Status(
           Status::Code::INTERNAL,
-          "unsupported datatype " + DataType_Name(io.data_type()) +
+          "unsupported datatype " + inference::DataType_Name(io.data_type()) +
               " for output '" + io.name() + "' for model '" + name_ + "'");
     }
   }
@@ -732,7 +732,7 @@ BaseBackend::Context::Run(
       batchn_shape.insert(
           batchn_shape.end(), batch1_shape.begin(), batch1_shape.end());
 
-      const DataType datatype = repr_input->DType();
+      const inference::DataType datatype = repr_input->DType();
 
       // The name of the input in the model can be different...
       const std::string* input_tensor_name = &input_name;
@@ -746,7 +746,7 @@ BaseBackend::Context::Run(
       // is set. If unable to create the tensor then fail all
       // requests.
       TRTISTF_Tensor* tensor = TRTISTF_TensorNew(
-          input_tensor_name->c_str(), ConvertDataType(datatype),
+          input_tensor_name->c_str(), Convertinference::DataType(datatype),
           batchn_shape.size(),
           (batchn_shape.size() == 0) ? nullptr : &batchn_shape[0],
           input_device_id_);
@@ -755,7 +755,7 @@ BaseBackend::Context::Run(
             Status::Code::INTERNAL,
             "failed to create input tensor '" + input_name + "' with shape " +
                 DimsListToString(batchn_shape) + " and data type " +
-                DataType_Name(datatype) + " for '" + name_ + "'");
+                inference::DataType_Name(datatype) + " for '" + name_ + "'");
 
         FAIL_ALL_AND_RETURN_IF_ERROR(
             requests, responses, metric_reporter_.get(), status,
@@ -767,7 +767,7 @@ BaseBackend::Context::Run(
       *input_tensors = tlink;
 
       // Custom handling for string/bytes tensor...
-      if (datatype == DataType::TYPE_STRING) {
+      if (datatype == inference::DataType::TYPE_STRING) {
         size_t tensor_offset = 0;
         const size_t batch1_element_cnt = GetElementCount(batch1_shape);
 
@@ -794,7 +794,7 @@ BaseBackend::Context::Run(
         }
       }
       // Use the collector for non-STRING datatype...
-      else {  // datatype != DataType::TYPE_STRING
+      else {  // datatype != inference::DataType::TYPE_STRING
         collector.ProcessTensor(
             input_name, datatype, batch1_shape, TRTISTF_TensorData(tensor),
             TRTISTF_TensorDataByteSize(tensor),
@@ -890,10 +890,10 @@ BaseBackend::Context::Run(
     for (const auto& name : model_output_names) {
       TRTISTF_Tensor* output_tensor = output_tensor_itr->tensor_;
 
-      TRTISTF_DataType tf_datatype = TRTISTF_TensorDataType(output_tensor);
+      TRTISTF_inference::DataType tf_datatype = TRTISTF_Tensorinference::DataType(output_tensor);
       TRTISTF_Shape* tf_shape = TRTISTF_TensorShape(output_tensor);
 
-      const DataType datatype = ConvertDataType(tf_datatype);
+      const inference::DataType datatype = Convertinference::DataType(tf_datatype);
 
       // batchn_shape holds the shape of the entire tensor batch, but
       // is overwritten below and used as the shape for each response
@@ -906,7 +906,7 @@ BaseBackend::Context::Run(
       }
 
       // Custom handling for string/bytes tensor...
-      if (datatype == DataType::TYPE_STRING) {
+      if (datatype == inference::DataType::TYPE_STRING) {
         size_t tensor_offset = 0;
 
         for (size_t idx = 0; idx < responses.size(); idx++) {
@@ -935,7 +935,7 @@ BaseBackend::Context::Run(
         }
       }
       // Use the responder for non-STRING datatype...
-      else {  // datatype != DataType::TYPE_STRING
+      else {  // datatype != inference::DataType::TYPE_STRING
         responder.ProcessTensor(
             name, datatype, batchn_shape, TRTISTF_TensorData(output_tensor),
             (TRTISTF_TensorIsGPUTensor(output_tensor))

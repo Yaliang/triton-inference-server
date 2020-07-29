@@ -84,7 +84,7 @@ typedef enum {
   TRTISTF_TYPE_FP32,
   TRTISTF_TYPE_FP64,
   TRTISTF_TYPE_STRING
-} TRTISTF_DataType;
+} TRTISTF_inference::DataType;
 
 typedef enum {
   TRTISTF_MODE_FP32,
@@ -122,7 +122,7 @@ typedef struct {
   char* inmodel_name_;
 
   // The data-type
-  TRTISTF_DataType data_type_;
+  TRTISTF_inference::DataType data_type_;
 
   // The shape
   TRTISTF_Shape* shape_;
@@ -165,14 +165,14 @@ TRTISTF_EXPORT void TRTISTF_TensorListDelete(TRTISTF_TensorList* list);
 // the data type is not supported for GPU tensor.
 // Return nullptr if failed to create the tensor.
 TRTISTF_EXPORT TRTISTF_Tensor* TRTISTF_TensorNew(
-    const char* name, TRTISTF_DataType dtype, size_t shape_rank,
+    const char* name, TRTISTF_inference::DataType dtype, size_t shape_rank,
     int64_t* shape_dims, int tf_gpu_id);
 
 // Return a tensor's datatype.
-TRTISTF_EXPORT TRTISTF_DataType TRTISTF_TensorDataType(TRTISTF_Tensor* tensor);
+TRTISTF_EXPORT TRTISTF_inference::DataType TRTISTF_Tensorinference::DataType(TRTISTF_Tensor* tensor);
 
 // Return the size of a tensor datatype, in bytes.
-TRTISTF_EXPORT int64_t TRTISTF_TensorDataTypeByteSize(TRTISTF_Tensor* tensor);
+TRTISTF_EXPORT int64_t TRTISTF_Tensorinference::DataTypeByteSize(TRTISTF_Tensor* tensor);
 
 // Return the shape of the tensor. The shape is owned by the tensor
 // and should not be modified or freed by the caller.
@@ -245,8 +245,8 @@ TRTISTF_EXPORT void TRTISTF_ModelDelete(TRTISTF_Model* model);
 // in such case, the callable will expect those unsupported I/Os to be on CPU.
 TRTISTF_Error* TRTISTF_ModelMakeCallable(
     TRTISTF_Model* model, const char** input_names,
-    const TRTISTF_DataType* input_types, const size_t num_inputs,
-    const char** output_names, const TRTISTF_DataType* output_types,
+    const TRTISTF_inference::DataType* input_types, const size_t num_inputs,
+    const char** output_names, const TRTISTF_inference::DataType* output_types,
     const size_t num_outputs);
 
 // Get information about a model inputs. The returned list is owned by

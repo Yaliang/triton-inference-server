@@ -62,7 +62,7 @@ class Caffe2Workspace {
   // Input or output datatype. Protobufs can't cross the
   // Caffe2Workspace boundary so need to have this non-protobuf
   // definition.
-  enum DataType {
+  enum inference::DataType {
     TYPE_INVALID,
     TYPE_BOOL,
     TYPE_UINT8,
@@ -90,7 +90,7 @@ class Caffe2Workspace {
   // Set the value for an input tensor in preparation for inferencing.
   virtual Error SetInputTensor(
       const std::string& name, const std::vector<int64_t>& shape,
-      const DataType dtype, const char* content, size_t byte_size) = 0;
+      const inference::DataType dtype, const char* content, size_t byte_size) = 0;
 
   // Get the value for an output tensor after inferencing.
   virtual Error GetOutputTensor(

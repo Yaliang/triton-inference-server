@@ -360,17 +360,17 @@ InferenceBackend::GenerateWarmupData(std::vector<WarmupData>* samples)
       }
 
       int64_t batch_byte_size =
-          element_count * GetDataTypeByteSize(input_meta.second.data_type());
+          element_count * Getinference::DataTypeByteSize(input_meta.second.data_type());
       if (batch_byte_size == 0) {
         batch_byte_size = element_count * sizeof(int32_t);
       }
 
       switch (input_meta.second.input_data_type_case()) {
-        case ModelWarmup_Input::InputDataTypeCase::kZeroData:
+        case ModelWarmup_Input::Inputinference::DataTypeCase::kZeroData:
           max_zero_byte_size = std::max(batch_byte_size, max_zero_byte_size);
           break;
-        case ModelWarmup_Input::InputDataTypeCase::kRandomData: {
-          if (input_meta.second.data_type() == DataType::TYPE_STRING) {
+        case ModelWarmup_Input::Inputinference::DataTypeCase::kRandomData: {
+          if (input_meta.second.data_type() == inference::DataType::TYPE_STRING) {
             max_zero_byte_size = std::max(batch_byte_size, max_zero_byte_size);
           } else {
             max_random_byte_size =
@@ -414,25 +414,25 @@ InferenceBackend::GenerateWarmupData(std::vector<WarmupData>* samples)
         auto batch1_element_count = GetElementCount(input_meta.second.dims());
         auto batch_byte_size =
             batch1_element_count *
-            GetDataTypeByteSize(input_meta.second.data_type());
+            Getinference::DataTypeByteSize(input_meta.second.data_type());
         if (batch_byte_size == 0) {
           batch_byte_size = batch1_element_count * sizeof(int32_t);
         }
 
         const char* allocated_ptr;
         switch (input_meta.second.input_data_type_case()) {
-          case ModelWarmup_Input::InputDataTypeCase::kZeroData:
+          case ModelWarmup_Input::Inputinference::DataTypeCase::kZeroData:
             allocated_ptr = zero_buffer;
             break;
-          case ModelWarmup_Input::InputDataTypeCase::kRandomData: {
-            if (input_meta.second.data_type() == DataType::TYPE_STRING) {
+          case ModelWarmup_Input::Inputinference::DataTypeCase::kRandomData: {
+            if (input_meta.second.data_type() == inference::DataType::TYPE_STRING) {
               allocated_ptr = zero_buffer;
             } else {
               allocated_ptr = random_buffer;
             }
             break;
           }
-          case ModelWarmup_Input::InputDataTypeCase::kInputDataFile: {
+          case ModelWarmup_Input::Inputinference::DataTypeCase::kInputDataFile: {
             // For data provided from file, we can set buffer in first pass
             warmup_data.provided_data_.emplace_back(new std::string());
             auto input_data = warmup_data.provided_data_.back().get();
@@ -440,7 +440,7 @@ InferenceBackend::GenerateWarmupData(std::vector<WarmupData>* samples)
                 JoinPath({model_dir_, kWarmupDataFolder,
                           input_meta.second.input_data_file()}),
                 input_data));
-            if (input_meta.second.data_type() == DataType::TYPE_STRING) {
+            if (input_meta.second.data_type() == inference::DataType::TYPE_STRING) {
               batch_byte_size = input_data->size();
             } else if (((size_t)batch_byte_size) > input_data->size()) {
               return Status(
