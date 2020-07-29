@@ -104,20 +104,20 @@ int64_t GetElementCount(const std::vector<int64_t>& dims);
 /// \return The number of elements, or -1 if the number of elements
 /// cannot be determined because the shape contains one or more
 /// wilcard dimensions.
-int64_t GetElementCount(const ModelInput& mio);
+int64_t GetElementCount(const inference::ModelInput& mio);
 
 /// Get the number of elements in the shape of a model output.
 /// \param mio The model output.
 /// \return The number of elements, or -1 if the number of elements
 /// cannot be determined because the shape contains one or more
 /// wilcard dimensions.
-int64_t GetElementCount(const ModelOutput& mio);
+int64_t GetElementCount(const inference::ModelOutput& mio);
 
 /// Are values of a datatype fixed-size, or variable-sized.
 /// \param dtype The data-type.
 /// \return True if datatype values are fixed-sized, false if
 /// variable-sized.
-bool IsFixedSizeinference::DataType(const inference::DataType dtype);
+bool IsFixedSizeDataType(const inference::DataType dtype);
 
 /// Get the size of objects of a given datatype in bytes.
 /// \param dtype The data-type.
@@ -125,7 +125,7 @@ bool IsFixedSizeinference::DataType(const inference::DataType dtype);
 /// size cannot be determine (for example, values of type TYPE_STRING
 /// have variable length and so size cannot be determine just from the
 /// type).
-size_t Getinference::DataTypeByteSize(const inference::DataType dtype);
+size_t GetDataTypeByteSize(const inference::DataType dtype);
 
 /// Get the size, in bytes, of a tensor based on datatype and
 /// shape.
@@ -172,13 +172,13 @@ int64_t GetByteSize(
 /// \param mio The ModelInput protobuf.
 /// \return The size, in bytes, of the corresponding tensor, or -1 if
 /// unable to determine the size.
-int64_t GetByteSize(const ModelInput& mio);
+int64_t GetByteSize(const inference::ModelInput& mio);
 
 /// Get the size, in bytes, of a tensor based on ModelOutput.
 /// \param mio The ModelOutput protobuf.
 /// \return The size, in bytes, of the corresponding tensor, or -1 if
 /// unable to determine the size.
-int64_t GetByteSize(const ModelOutput& mio);
+int64_t GetByteSize(const inference::ModelOutput& mio);
 
 /// Get the Platform value for a platform name.
 /// \param platform_name The platform name.
@@ -190,7 +190,7 @@ Platform GetPlatform(const std::string& platform_name);
 /// configuration's priority.
 /// \param config The model configuration.
 /// \return The nice level.
-int GetCpuNiceLevel(const ModelConfig& config);
+int GetCpuNiceLevel(const inference::ModelConfig& config);
 
 /// Compare two model configuration shapes for equality. Wildcard
 /// dimensions (that is, dimensions with size WILDCARD_DIM) are
@@ -248,29 +248,29 @@ std::string DimsListToString(
 /// Get the server protocol string representation of a datatype.
 /// \param dtype The data type.
 /// \return The string representation.
-const char* inference::DataTypeToProtocolString(const inference::DataType dtype);
+const char* DataTypeToProtocolString(const inference::DataType dtype);
 
 /// Get the datatype corresponding to a server protocol string
 /// representation of a datatype.
 /// \param dtype string representation.
 /// \return The data type.
-inference::DataType ProtocolStringToinference::DataType(const std::string& dtype);
+inference::DataType ProtocolStringToDataType(const std::string& dtype);
 
 /// Get the datatype corresponding to a server protocol string
 /// representation of a datatype.
 /// \param dtype Pointer to string.
 /// \param len Length of the string.
 /// \return The data type.
-inference::DataType ProtocolStringToinference::DataType(const char* dtype, size_t len);
+inference::DataType ProtocolStringToDataType(const char* dtype, size_t len);
 
 /// Get the Triton server data type corresponding to a data type.
 /// \param dtype The data type.
 /// \return The Triton server data type.
-TRITONSERVER_inference::DataType inference::DataTypeToTriton(const inference::DataType dtype);
+TRITONSERVER_DataType DataTypeToTriton(const inference::DataType dtype);
 
 /// Get the data type corresponding to a Triton server data type.
 /// \param dtype The Triton server data type.
 /// \return The data type.
-inference::DataType TritonToinference::DataType(const TRITONSERVER_inference::DataType dtype);
+inference::DataType TritonToDataType(const TRITONSERVER_DataType dtype);
 
 }}  // namespace nvidia::inferenceserver

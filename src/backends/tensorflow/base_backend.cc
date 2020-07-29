@@ -61,7 +61,7 @@ BaseBackend::Context::~Context()
 
 Status
 BaseBackend::Init(
-    const std::string& path, const ModelConfig& model_config,
+    const std::string& path, const inference::ModelConfig& model_config,
     const GraphDefBackendFactory::Config* backend_config,
     const std::string& platform)
 {
@@ -84,13 +84,13 @@ BaseBackend::CreateExecutionContexts(
 
   for (const auto& group : Config().instance_group()) {
     for (int c = 0; c < group.count(); c++) {
-      if (group.kind() == ModelInstanceGroup::KIND_CPU) {
+      if (group.kind() == inference::ModelInstanceGroup::KIND_CPU) {
         const std::string instance_name =
             group.name() + "_" + std::to_string(c) + "_cpu";
         RETURN_IF_ERROR(CreateExecutionContext(
             instance_name, Context::NO_GPU_DEVICE, paths));
         total_context_cnt++;
-      } else if (group.kind() == ModelInstanceGroup::KIND_MODEL) {
+      } else if (group.kind() == inference::ModelInstanceGroup::KIND_MODEL) {
         const std::string instance_name =
             group.name() + "_" + std::to_string(c) + "_model_device";
         RETURN_IF_ERROR(CreateExecutionContext(
@@ -351,7 +351,7 @@ BaseBackend::Context::ValidateInputs(
 
 Status
 BaseBackend::Context::ValidateOutputs(
-    const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios)
 {
   for (const auto& io : ios) {
     if (Convertinference::DataType(io.data_type()) ==

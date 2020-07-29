@@ -118,7 +118,7 @@ OnnxBackend::CreateExecutionContextsHelper(
   // Create a session for each instance.
   for (const auto& group : Config().instance_group()) {
     for (int c = 0; c < group.count(); c++) {
-      if (group.kind() == ModelInstanceGroup::KIND_CPU) {
+      if (group.kind() == inference::ModelInstanceGroup::KIND_CPU) {
         const std::string instance_name =
             group.name() + "_" + std::to_string(c) + "_cpu";
         RETURN_IF_ERROR(CreateExecutionContext(
@@ -325,19 +325,19 @@ OnnxBackend::CreateExecutionContext(
     bool have_start, have_end, have_ready, have_corrid;
     RETURN_IF_ERROR(context->ValidateBooleanSequenceControl(
         Config().name(), Config().sequence_batching(),
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_START,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_START,
         false /* required */, &have_start));
     RETURN_IF_ERROR(context->ValidateBooleanSequenceControl(
         Config().name(), Config().sequence_batching(),
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_END,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_END,
         false /* required */, &have_end));
     RETURN_IF_ERROR(context->ValidateBooleanSequenceControl(
         Config().name(), Config().sequence_batching(),
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY,
         false /* required */, &have_ready));
     RETURN_IF_ERROR(context->ValidateTypedSequenceControl(
         Config().name(), Config().sequence_batching(),
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID,
         false /* required */, &have_corrid));
     if (have_start) {
       expected_input_cnt += 1;
@@ -362,8 +362,8 @@ OnnxBackend::CreateExecutionContext(
 
 Status
 OnnxBackend::Context::ValidateBooleanSequenceControl(
-    const std::string& model_name, const ModelSequenceBatching& batcher,
-    const ModelSequenceBatching::Control::Kind control_kind, bool required,
+    const std::string& model_name, const inference::ModelSequenceBatching& batcher,
+    const inference::ModelSequenceBatching::Control::Kind control_kind, bool required,
     bool* have_control)
 {
   std::string tensor_name;
@@ -414,8 +414,8 @@ OnnxBackend::Context::ValidateBooleanSequenceControl(
 
 Status
 OnnxBackend::Context::ValidateTypedSequenceControl(
-    const std::string& model_name, const ModelSequenceBatching& batcher,
-    const ModelSequenceBatching::Control::Kind control_kind, bool required,
+    const std::string& model_name, const inference::ModelSequenceBatching& batcher,
+    const inference::ModelSequenceBatching::Control::Kind control_kind, bool required,
     bool* have_control)
 {
   std::string tensor_name;
@@ -467,7 +467,7 @@ OnnxBackend::Context::ValidateTypedSequenceControl(
 Status
 OnnxBackend::Context::ValidateInputs(
     const std::string& model_name,
-    const ::google::protobuf::RepeatedPtrField<ModelInput>& ios,
+    const ::google::protobuf::RepeatedPtrField<inference::ModelInput>& ios,
     const size_t expected_input_cnt)
 {
   std::set<std::string> input_tensor_names;
@@ -520,7 +520,7 @@ OnnxBackend::Context::ValidateInputs(
 Status
 OnnxBackend::Context::ValidateOutputs(
     const std::string& model_name,
-    const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios)
 {
   std::set<std::string> output_tensor_names;
   RETURN_IF_ERROR(OutputNames(session_, output_tensor_names));

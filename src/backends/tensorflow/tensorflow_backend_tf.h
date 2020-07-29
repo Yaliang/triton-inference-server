@@ -255,7 +255,7 @@ TRTISTF_EXPORT TRTISTF_IOList* TRTISTF_ModelInputs(TRTISTF_Model* model);
 
 // Get information about a model outputs. The returned list is owned
 // by the model and should not be modified or freed by the caller.
-TRTISTF_EXPORT TRTISTF_IOList* TRTISTF_ModelOutputs(TRTISTF_Model* model);
+TRTISTF_EXPORT TRTISTF_IOList* TRTISTF_inference::ModelOutputs(TRTISTF_Model* model);
 
 // Run a model using the provides input tensors to produce the named
 // outputs. Ownership of the 'input_tensors' is passed to the model

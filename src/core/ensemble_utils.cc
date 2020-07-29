@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2019, NVIDIA CORPORATION. All rights reserved.
+// Copyright (c) 2018-2020, NVIDIA CORPORATION. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -116,8 +116,8 @@ ValidateTensorConsistency(
 
 Status
 ValidateTensorMapping(
-    const std::string& ensemble, const ModelEnsembling::Step& step,
-    const ModelConfig& model_config,
+    const std::string& ensemble, const inference::ModelEnsembling::Step& step,
+    const inference::ModelConfig& model_config,
     std::unordered_map<std::string, TensorNode>* ensemble_tensors)
 {
   const bool batching = (model_config.max_batch_size() > 0);
@@ -279,7 +279,7 @@ ValidateEnsembleConfig(
 
   for (const auto& step : ensemble_config.ensemble_scheduling().step()) {
     const auto& model_name = step.model_name();
-    ModelConfig model_config;
+    inference::ModelConfig model_config;
     for (auto& node : ensemble->upstreams_) {
       if (model_name == node.first->model_name_) {
         model_config = node.first->model_config_;

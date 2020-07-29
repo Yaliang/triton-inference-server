@@ -63,41 +63,41 @@ LibTorchBackend::Context::~Context()
 }
 
 std::pair<bool, torch::ScalarType>
-Convertinference::DataTypeToTorchType(const inference::DataType& dtype)
+ConvertDataTypeToTorchType(const inference::DataType& dtype)
 {
   torch::ScalarType type = torch::kInt;
   switch (dtype) {
-    case TYPE_BOOL:
+    case inference::DataType::TYPE_BOOL:
       type = torch::kBool;
       break;
-    case TYPE_UINT8:
+    case inference::DataType::TYPE_UINT8:
       type = torch::kByte;
       break;
-    case TYPE_INT8:
+    case inference::DataType::TYPE_INT8:
       type = torch::kChar;
       break;
-    case TYPE_INT16:
+    case inference::DataType::TYPE_INT16:
       type = torch::kShort;
       break;
-    case TYPE_INT32:
+    case inference::DataType::TYPE_INT32:
       type = torch::kInt;
       break;
-    case TYPE_INT64:
+    case inference::DataType::TYPE_INT64:
       type = torch::kLong;
       break;
-    case TYPE_FP16:
+    case inference::DataType::TYPE_FP16:
       type = torch::kHalf;
       break;
-    case TYPE_FP32:
+    case inference::DataType::TYPE_FP32:
       type = torch::kFloat;
       break;
-    case TYPE_FP64:
+    case inference::DataType::TYPE_FP64:
       type = torch::kDouble;
       break;
-    case TYPE_UINT16:
-    case TYPE_UINT32:
-    case TYPE_UINT64:
-    case TYPE_STRING:
+    case inference::DataType::TYPE_UINT16:
+    case inference::DataType::TYPE_UINT32:
+    case inference::DataType::TYPE_UINT64:
+    case inference::DataType::TYPE_STRING:
     default:
       return std::make_pair(false, type);
   }
@@ -106,29 +106,29 @@ Convertinference::DataTypeToTorchType(const inference::DataType& dtype)
 }
 
 inference::DataType
-ConvertTorchTypeToinference::DataType(const torch::ScalarType& ttype)
+ConvertTorchTypeToDataType(const torch::ScalarType& ttype)
 {
   switch (ttype) {
     case torch::kBool:
-      return TYPE_BOOL;
+      return inference::DataType::TYPE_BOOL;
     case torch::kByte:
-      return TYPE_UINT8;
+      return inference::DataType::TYPE_UINT8;
     case torch::kChar:
-      return TYPE_INT8;
+      return inference::DataType::TYPE_INT8;
     case torch::kShort:
-      return TYPE_INT16;
+      return inference::DataType::TYPE_INT16;
     case torch::kInt:
-      return TYPE_INT32;
+      return inference::DataType::TYPE_INT32;
     case torch::kLong:
-      return TYPE_INT64;
+      return inference::DataType::TYPE_INT64;
     case torch::kHalf:
-      return TYPE_FP16;
+      return inference::DataType::TYPE_FP16;
     case torch::kFloat:
-      return TYPE_FP32;
+      return inference::DataType::TYPE_FP32;
     case torch::kDouble:
-      return TYPE_FP64;
+      return inference::DataType::TYPE_FP64;
     default:
-      return TYPE_FP32;
+      return inference::DataType::TYPE_FP32;
   }
 }
 
@@ -141,7 +141,7 @@ LibTorchBackend::CreateExecutionContexts(
   // Create a context for each instance.
   for (const auto& group : Config().instance_group()) {
     for (int c = 0; c < group.count(); c++) {
-      if (group.kind() == ModelInstanceGroup::KIND_CPU) {
+      if (group.kind() == inference::ModelInstanceGroup::KIND_CPU) {
         const std::string instance_name =
             group.name() + "_" + std::to_string(c) + "_cpu";
         RETURN_IF_ERROR(CreateExecutionContext(
@@ -273,13 +273,13 @@ LibTorchBackend::CreateExecutionContext(
 
 Status
 LibTorchBackend::Context::ValidateInputs(
-    const ::google::protobuf::RepeatedPtrField<ModelInput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::ModelInput>& ios)
 {
   std::string deliminator = "__";
   int ip_index = 0;
 
   for (const auto& io : ios) {
-    const auto pr = Convertinference::DataTypeToTorchType(io.data_type());
+    const auto pr = ConvertDataTypeToTorchType(io.data_type());
     if (!pr.first) {
       return Status(
           Status::Code::INTERNAL,
@@ -311,7 +311,7 @@ LibTorchBackend::Context::ValidateInputs(
 
 Status
 LibTorchBackend::Context::ValidateControlInputs(
-    const ModelSequenceBatching& batching)
+    const inference::ModelSequenceBatching& batching)
 {
   std::string deliminator = "__";
   int ip_index = 0;
@@ -341,13 +341,13 @@ LibTorchBackend::Context::ValidateControlInputs(
 
 Status
 LibTorchBackend::Context::ValidateOutputs(
-    const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios)
 {
   std::string deliminator = "__";
   int op_index;
 
   for (const auto& io : ios) {
-    const auto pr = Convertinference::DataTypeToTorchType(io.data_type());
+    const auto pr = ConvertDataTypeToTorchType(io.data_type());
     if (!pr.first) {
       return Status(
           Status::Code::INTERNAL,
@@ -405,10 +405,10 @@ LibTorchBackend::Context::SetInputTensors(
 
     int ip_index = input_index_map_[input_name];
 
-    const auto torch_dtype = Convertinference::DataTypeToTorchType(datatype);
+    const auto torch_dtype = ConvertDataTypeToTorchType(datatype);
     if (!torch_dtype.first) {
       return Status(
-          Status::Code::INTERNAL, "Failed to convert inference::DataType '" +
+          Status::Code::INTERNAL, "Failed to convert DataType '" +
                                       inference::DataType_Name(datatype) +
                                       "' to Torch datatype");
     }
@@ -475,7 +475,7 @@ LibTorchBackend::Context::ReadOutputTensors(
     const std::string& name = output.name();
     int op_index = (*output_index_map)[name];
 
-    const ModelOutput* output_config;
+    const inference::ModelOutput* output_config;
     RETURN_IF_ERROR(base->GetOutput(name, &output_config));
 
     // Checked at initialization time to make sure that STRING is not
@@ -517,7 +517,7 @@ LibTorchBackend::Context::GetOutputTensor(
     torch::Tensor output_flat = (*outputs_)[op_index].contiguous().flatten();
 
     // verify output datatype matches datatype from model config
-    inference::DataType rec_dtype = ConvertTorchTypeToinference::DataType(output_flat.scalar_type());
+    inference::DataType rec_dtype = ConvertTorchTypeToDataType(output_flat.scalar_type());
     if (dtype != rec_dtype) {
       return Status(
           Status::Code::INVALID_ARG,

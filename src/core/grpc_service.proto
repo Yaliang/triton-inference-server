@@ -28,7 +28,7 @@ syntax = "proto3";
 
 package inference;
 
-//@@.. cpp:namespace:: nvidia::inferenceserver
+//@@.. cpp:namespace:: inference
 
 import "model_config.proto";
 

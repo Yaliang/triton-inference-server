@@ -1062,7 +1062,7 @@ TRTISTF_ModelInputs(TRTISTF_Model* model)
 }
 
 TRTISTF_IOList*
-TRTISTF_ModelOutputs(TRTISTF_Model* model)
+TRTISTF_inference::ModelOutputs(TRTISTF_Model* model)
 {
   ModelImpl* m = reinterpret_cast<ModelImpl*>(model);
   return m->Outputs();

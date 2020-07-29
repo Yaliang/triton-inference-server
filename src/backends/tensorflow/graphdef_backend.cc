@@ -60,7 +60,7 @@ GraphDefBackend::CreateTRTISTFModel(
   // inputs and outputs. Also, only the name is available, shape and
   // datatype are not.
   const TRTISTF_IOList* inputs = TRTISTF_ModelInputs(model);
-  const TRTISTF_IOList* outputs = TRTISTF_ModelOutputs(model);
+  const TRTISTF_IOList* outputs = TRTISTF_inference::ModelOutputs(model);
 
   std::set<std::string> potential_inputs, potential_outputs;
   for (const TRTISTF_IOList* itr = inputs; itr != nullptr; itr = itr->next_) {
@@ -83,16 +83,16 @@ GraphDefBackend::CreateTRTISTFModel(
   // inputs are present in the model
   if (Config().has_sequence_batching()) {
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_START, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_START, inputs,
         false /* required */));
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_END, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_END, inputs,
         false /* required */));
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY, inputs,
         false /* required */));
     RETURN_IF_ERROR(ValidateTypedSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID, inputs,
         false /* required */));
   }
 
@@ -108,7 +108,7 @@ GraphDefBackend::CreateTRTISTFModel(
 
 Status
 GraphDefBackend::ValidateBooleanSequenceControl(
-    const ModelSequenceBatching::Control::Kind control_kind,
+    const inference::ModelSequenceBatching::Control::Kind control_kind,
     const TRTISTF_IOList* inputs, bool required)
 {
   std::string tensor_name;
@@ -130,7 +130,7 @@ GraphDefBackend::ValidateBooleanSequenceControl(
 
 Status
 GraphDefBackend::ValidateTypedSequenceControl(
-    const ModelSequenceBatching::Control::Kind control_kind,
+    const inference::ModelSequenceBatching::Control::Kind control_kind,
     const TRTISTF_IOList* inputs, bool required)
 {
   std::string tensor_name;

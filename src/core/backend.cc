@@ -106,7 +106,7 @@ WarmupRequestComplete(
 
 Status
 InferenceBackend::GetInput(
-    const std::string& name, const ModelInput** input) const
+    const std::string& name, const inference::ModelInput** input) const
 {
   const auto itr = input_map_.find(name);
   if (itr == input_map_.end()) {
@@ -121,7 +121,7 @@ InferenceBackend::GetInput(
 
 Status
 InferenceBackend::GetOutput(
-    const std::string& name, const ModelOutput** output) const
+    const std::string& name, const inference::ModelOutput** output) const
 {
   const auto itr = output_map_.find(name);
   if (itr == output_map_.end()) {
@@ -135,8 +135,8 @@ InferenceBackend::GetOutput(
 }
 
 Status
-InferenceBackend::SetModelConfig(
-    const std::string& path, const ModelConfig& config)
+InferenceBackend::Setinference::ModelConfig(
+    const std::string& path, const inference::ModelConfig& config)
 {
   config_ = config;
   RETURN_IF_ERROR(GetModelVersionFromPath(path, &version_));
@@ -285,12 +285,12 @@ InferenceBackend::SetConfiguredScheduler(
 
 Status
 InferenceBackend::Init(
-    const std::string& path, const ModelConfig& config,
+    const std::string& path, const inference::ModelConfig& config,
     const std::string& platform)
 {
   RETURN_IF_ERROR(
-      ValidateModelConfig(config, platform, min_compute_capability_));
-  RETURN_IF_ERROR(SetModelConfig(path, config));
+      Validateinference::ModelConfig(config, platform, min_compute_capability_));
+  RETURN_IF_ERROR(Setinference::ModelConfig(path, config));
 
   return Status::Success;
 }
@@ -461,7 +461,7 @@ InferenceBackend::GenerateWarmupData(std::vector<WarmupData>* samples)
                                                "' to have input_data_type set");
         }
 
-        const ModelInput* input_config;
+        const inference::ModelInput* input_config;
         bool is_original_input =
             GetInput(input_meta.first, &input_config).IsOk();
         InferenceRequest::Input* input = nullptr;

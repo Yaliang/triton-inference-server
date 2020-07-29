@@ -44,7 +44,7 @@ namespace {
 // Convert model datatype to non-protobuf equivalent datatype required
 // by Caffe2Workspace.
 Caffe2Workspace::DataType
-Convertinference::DataType(inference::DataType dtype)
+ConvertDataType(inference::DataType dtype)
 {
   switch (dtype) {
     case inference::DataType::TYPE_INVALID:
@@ -110,7 +110,7 @@ NetDefBackend::CreateExecutionContexts(
   // (across all instances?).
   for (const auto& group : Config().instance_group()) {
     for (int c = 0; c < group.count(); c++) {
-      if (group.kind() == ModelInstanceGroup::KIND_CPU) {
+      if (group.kind() == inference::ModelInstanceGroup::KIND_CPU) {
         const std::string instance_name =
             group.name() + "_" + std::to_string(c) + "_cpu";
         RETURN_IF_ERROR(CreateExecutionContext(
@@ -240,16 +240,16 @@ NetDefBackend::CreateExecutionContext(
   // inputs are available in the model.
   if (Config().has_sequence_batching()) {
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_START, &input_names,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_START, &input_names,
         false /* required */));
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_END, &input_names,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_END, &input_names,
         false /* required */));
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY, &input_names,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY, &input_names,
         false /* required */));
     RETURN_IF_ERROR(ValidateTypedSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID, &input_names,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID, &input_names,
         false /* required */));
   }
 
@@ -281,7 +281,7 @@ NetDefBackend::CreateExecutionContext(
 
 Status
 NetDefBackend::ValidateBooleanSequenceControl(
-    const ModelSequenceBatching::Control::Kind control_kind,
+    const inference::ModelSequenceBatching::Control::Kind control_kind,
     std::vector<std::string>* input_names, bool required)
 {
   std::string tensor_name;
@@ -297,7 +297,7 @@ NetDefBackend::ValidateBooleanSequenceControl(
 
 Status
 NetDefBackend::ValidateTypedSequenceControl(
-    const ModelSequenceBatching::Control::Kind control_kind,
+    const inference::ModelSequenceBatching::Control::Kind control_kind,
     std::vector<std::string>* input_names, bool required)
 {
   std::string tensor_name;
@@ -322,7 +322,7 @@ NetDefBackend::Context::ValidateInputs(
           CheckAllowedModelInput(io, workspace_->PotentialInputNames()));
     }
 
-    if (Convertinference::DataType(io.data_type()) ==
+    if (ConvertDataType(io.data_type()) ==
         Caffe2Workspace::DataType::TYPE_INVALID) {
       return Status(
           Status::Code::INTERNAL,
@@ -337,7 +337,7 @@ NetDefBackend::Context::ValidateInputs(
 
 Status
 NetDefBackend::Context::ValidateOutputs(
-    const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios)
 {
   for (const auto& io : ios) {
     // For now, skipping the check if potential names is empty
@@ -346,7 +346,7 @@ NetDefBackend::Context::ValidateOutputs(
           CheckAllowedModelOutput(io, workspace_->PotentialOutputNames()));
     }
 
-    if (Convertinference::DataType(io.data_type()) ==
+    if (ConvertDataType(io.data_type()) ==
         Caffe2Workspace::DataType::TYPE_INVALID) {
       return Status(
           Status::Code::INTERNAL,
@@ -372,13 +372,13 @@ NetDefBackend::Context::ReadOutputTensors(
   for (const auto& output : base->Config().output()) {
     const std::string& name = output.name();
 
-    const ModelOutput* output_config;
+    const inference::ModelOutput* output_config;
     RETURN_IF_ERROR(base->GetOutput(name, &output_config));
 
     // Checked at initialization time to make sure that STRING is not
     // being used for an output, so can just assume fixed-sized here.
     const Caffe2Workspace::DataType dtype =
-        Convertinference::DataType(output_config->data_type());
+        ConvertDataType(output_config->data_type());
 
     const char* output_buffer = nullptr;
     size_t byte_size = 0;
@@ -433,7 +433,7 @@ NetDefBackend::Context::SetInputTensors(
 
     // Checked at initialization time to make sure that STRING is not
     // being used for an input, so can just assume fixed-sized here.
-    const Caffe2Workspace::DataType dtype = Convertinference::DataType(datatype);
+    const Caffe2Workspace::DataType dtype = ConvertDataType(datatype);
 
     // The entire input tensor must be delivered as a single
     // contiguous chunk so create a buffer large enough to hold the

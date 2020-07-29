@@ -500,7 +500,7 @@ InferenceRequest::PrepareForInference()
 Status
 InferenceRequest::Normalize()
 {
-  const ModelConfig& model_config = backend_raw_->Config();
+  const inference::ModelConfig& model_config = backend_raw_->Config();
 
   // Initialize the requested outputs to be used during inference. If
   // original_requested_outputs_ is empty assume all outputs specified
@@ -514,7 +514,7 @@ InferenceRequest::Normalize()
     // Validate if the original requested output name exists in the
     // model configuration.
     for (const auto& output_name : original_requested_outputs_) {
-      const ModelOutput* output_config;
+      const inference::ModelOutput* output_config;
       RETURN_IF_ERROR(backend_raw_->GetOutput(output_name, &output_config));
     }
   }
@@ -549,7 +549,7 @@ InferenceRequest::Normalize()
 
       // For a shape tensor, keep the tensor's shape as it is and mark
       // that the input is a shape tensor.
-      const ModelInput* input_config;
+      const inference::ModelInput* input_config;
       RETURN_IF_ERROR(backend_raw_->GetInput(pr.first, &input_config));
       if (input_config->is_shape_tensor()) {
         *input.MutableShape() = input.OriginalShape();
@@ -593,7 +593,7 @@ InferenceRequest::Normalize()
   // Verify that each input shape is valid for the model, make
   // adjustments for reshapes and find the total tensor size.
   for (auto& pr : original_inputs_) {
-    const ModelInput* input_config;
+    const inference::ModelInput* input_config;
     RETURN_IF_ERROR(backend_raw_->GetInput(pr.first, &input_config));
 
     auto& input = pr.second;
@@ -603,9 +603,9 @@ InferenceRequest::Normalize()
       return Status(
           Status::Code::INVALID_ARG,
           "inference input data-type is '" +
-              std::string(inference::DataTypeToProtocolString(input.DType())) +
+              std::string(DataTypeToProtocolString(input.DType())) +
               "', model expects '" +
-              std::string(inference::DataTypeToProtocolString(input_config->data_type())) +
+              std::string(DataTypeToProtocolString(input_config->data_type())) +
               "' for '" + ModelName() + "'");
     }
 
@@ -855,7 +855,7 @@ std::ostream&
 operator<<(std::ostream& out, const InferenceRequest::Input& input)
 {
   out << "input: " << input.Name()
-      << ", type: " << inference::DataTypeToProtocolString(input.DType())
+      << ", type: " << DataTypeToProtocolString(input.DType())
       << ", original shape: " << DimsListToString(input.OriginalShape())
       << ", shape: " << DimsListToString(input.Shape());
   if (input.IsShapeTensor()) {

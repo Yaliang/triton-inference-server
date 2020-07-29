@@ -60,7 +60,7 @@ SavedModelBackend::CreateTRTISTFModel(
   // the allowed outputs. Saved-model gives these explicitly so we can
   // check precisely if the model configuration matches.
   const TRTISTF_IOList* inputs = TRTISTF_ModelInputs(model);
-  const TRTISTF_IOList* outputs = TRTISTF_ModelOutputs(model);
+  const TRTISTF_IOList* outputs = TRTISTF_inference::ModelOutputs(model);
 
   std::set<std::string> expected_inputs, allowed_outputs;
   for (const TRTISTF_IOList* itr = inputs; itr != nullptr; itr = itr->next_) {
@@ -80,16 +80,16 @@ SavedModelBackend::CreateTRTISTFModel(
   if (Config().has_sequence_batching()) {
     bool have_start, have_end, have_ready, have_corrid;
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_START, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_START, inputs,
         false /* required */, &have_start));
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_END, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_END, inputs,
         false /* required */, &have_end));
     RETURN_IF_ERROR(ValidateBooleanSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY, inputs,
         false /* required */, &have_ready));
     RETURN_IF_ERROR(ValidateTypedSequenceControl(
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID, inputs,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID, inputs,
         false /* required */, &have_corrid));
     if (have_start) {
       expected_input_cnt += 1;
@@ -207,7 +207,7 @@ SavedModelBackend::CreateTRTISTFModel(
 
 Status
 SavedModelBackend::ValidateBooleanSequenceControl(
-    const ModelSequenceBatching::Control::Kind control_kind,
+    const inference::ModelSequenceBatching::Control::Kind control_kind,
     const TRTISTF_IOList* inputs, bool required, bool* have_control)
 {
   std::string tensor_name;
@@ -255,7 +255,7 @@ SavedModelBackend::ValidateBooleanSequenceControl(
 
 Status
 SavedModelBackend::ValidateTypedSequenceControl(
-    const ModelSequenceBatching::Control::Kind control_kind,
+    const inference::ModelSequenceBatching::Control::Kind control_kind,
     const TRTISTF_IOList* inputs, bool required, bool* have_control)
 {
   std::string tensor_name;

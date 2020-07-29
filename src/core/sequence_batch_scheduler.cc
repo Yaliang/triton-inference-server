@@ -39,7 +39,7 @@ namespace nvidia { namespace inferenceserver {
 
 Status
 SequenceBatchScheduler::Create(
-    const ModelConfig& config, const uint32_t runner_cnt,
+    const inference::ModelConfig& config, const uint32_t runner_cnt,
     const StandardInitFunc& OnInit, const StandardWarmupFunc& OnWarmup,
     const StandardRunFunc& OnSchedule,
     const std::unordered_map<std::string, bool>& enforce_equal_shape_tensors,
@@ -214,7 +214,7 @@ GetBooleanOverrideInputs(
 
 Status
 SequenceBatchScheduler::CreateBooleanControlTensors(
-    const ModelConfig& config,
+    const inference::ModelConfig& config,
     std::shared_ptr<ControlInputs>* start_input_overrides,
     std::shared_ptr<ControlInputs>* end_input_overrides,
     std::shared_ptr<ControlInputs>* startend_input_overrides,
@@ -238,7 +238,7 @@ SequenceBatchScheduler::CreateBooleanControlTensors(
   {
     RETURN_IF_ERROR(GetBooleanSequenceControlProperties(
         config.sequence_batching(), config.name(),
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_START,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_START,
         false /* required */, &tensor_name, &tensor_datatype, &fp32_false_value,
         &fp32_true_value, &int32_false_value, &int32_true_value));
     if (!tensor_name.empty()) {
@@ -262,7 +262,7 @@ SequenceBatchScheduler::CreateBooleanControlTensors(
   {
     RETURN_IF_ERROR(GetBooleanSequenceControlProperties(
         config.sequence_batching(), config.name(),
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_END,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_END,
         false /* required */, &tensor_name, &tensor_datatype, &fp32_false_value,
         &fp32_true_value, &int32_false_value, &int32_true_value));
     if (!tensor_name.empty()) {
@@ -286,7 +286,7 @@ SequenceBatchScheduler::CreateBooleanControlTensors(
   {
     RETURN_IF_ERROR(GetBooleanSequenceControlProperties(
         config.sequence_batching(), config.name(),
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY,
         false /* required */, &tensor_name, &tensor_datatype, &fp32_false_value,
         &fp32_true_value, &int32_false_value, &int32_true_value));
     if (!tensor_name.empty()) {
@@ -677,7 +677,7 @@ SequenceBatch::SequenceBatch(
 }
 
 bool
-SequenceBatch::CreateCorrelationIDControl(const ModelConfig& config)
+SequenceBatch::CreateCorrelationIDControl(const inference::ModelConfig& config)
 {
   // If model wants CORRID control then get the name of the input
   // tensor and initialize the override structure for each sequence
@@ -686,7 +686,7 @@ SequenceBatch::CreateCorrelationIDControl(const ModelConfig& config)
   inference::DataType correlation_id_datatype;
   Status corrid_status = GetTypedSequenceControlProperties(
       config.sequence_batching(), config.name(),
-      ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID,
+      inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID,
       false /* required */, &correlation_id_tensor_name,
       &correlation_id_datatype);
   if (!corrid_status.IsOk()) {
@@ -703,8 +703,8 @@ SequenceBatch::CreateCorrelationIDControl(const ModelConfig& config)
         (correlation_id_datatype != TYPE_INT32)) {
       LOG_ERROR << "unexpected control data type, expected TYPE_UINT64, "
                    "TYPE_INT64, TYPE_UINT32 or TYPE_INT32 for "
-                << ModelSequenceBatching_Control_Kind_Name(
-                       ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID)
+                << inference::ModelSequenceBatching_Control_Kind_Name(
+                       inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID)
                 << " for " << config.name();
       return false;
     }
@@ -793,7 +793,7 @@ SequenceBatch::SetControlTensors(
 
 DirectSequenceBatch::DirectSequenceBatch(
     SequenceBatchScheduler* base, const uint32_t batcher_idx,
-    const size_t seq_slot_cnt, const ModelConfig& config,
+    const size_t seq_slot_cnt, const inference::ModelConfig& config,
     const Scheduler::StandardInitFunc& OnInit,
     const Scheduler::StandardWarmupFunc& OnWarmup,
     const Scheduler::StandardRunFunc& OnSchedule,
@@ -1167,7 +1167,7 @@ DirectSequenceBatch::SchedulerThread(
 
 OldestSequenceBatch::OldestSequenceBatch(
     SequenceBatchScheduler* base, const uint32_t batcher_idx,
-    const size_t seq_slot_cnt, const ModelConfig& config,
+    const size_t seq_slot_cnt, const inference::ModelConfig& config,
     const Scheduler::StandardInitFunc& OnInit,
     const Scheduler::StandardWarmupFunc& OnWarmup,
     const Scheduler::StandardRunFunc& OnSchedule,

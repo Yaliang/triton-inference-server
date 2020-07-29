@@ -77,10 +77,10 @@ class LibTorchBackend : public InferenceBackend {
     DISALLOW_MOVE(Context);
 
     Status ValidateInputs(
-        const ::google::protobuf::RepeatedPtrField<ModelInput>& ios);
+        const ::google::protobuf::RepeatedPtrField<inference::ModelInput>& ios);
     Status ValidateOutputs(
-        const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios);
-    Status ValidateControlInputs(const ModelSequenceBatching& ios);
+        const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios);
+    Status ValidateControlInputs(const inference::ModelSequenceBatching& ios);
 
     // Set the meta data of an input from payloads.
     Status SetInputMetaData(

@@ -54,10 +54,10 @@ class NetDefBackend : public InferenceBackend {
 
  private:
   Status ValidateBooleanSequenceControl(
-      const ModelSequenceBatching::Control::Kind control_kind,
+      const inference::ModelSequenceBatching::Control::Kind control_kind,
       std::vector<std::string>* input_names, bool required);
   Status ValidateTypedSequenceControl(
-      const ModelSequenceBatching::Control::Kind control_kind,
+      const inference::ModelSequenceBatching::Control::Kind control_kind,
       std::vector<std::string>* input_names, bool required);
 
  private:
@@ -78,7 +78,7 @@ class NetDefBackend : public InferenceBackend {
     Status ValidateInputs(
         const ::google::protobuf::RepeatedPtrField<ModelInput>& ios);
     Status ValidateOutputs(
-        const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios);
+        const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios);
 
     // Set input tensors from one or more requests.
     Status SetInputTensors(

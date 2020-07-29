@@ -228,7 +228,7 @@ PlanBackend::CreateExecutionContexts(
   // access to the same GPU.
   for (const auto& group : Config().instance_group()) {
     // TensorRT requires that every context have a GPU.
-    if ((group.kind() != ModelInstanceGroup::KIND_GPU) ||
+    if ((group.kind() != inference::ModelInstanceGroup::KIND_GPU) ||
         (group.gpus().size() == 0)) {
       return Status(
           Status::Code::INVALID_ARG,
@@ -654,7 +654,7 @@ PlanBackend::CreateExecutionContext(
 
 Status
 PlanBackend::Context::ValidateInputs(
-    const ::google::protobuf::RepeatedPtrField<ModelInput>& ios,
+    const ::google::protobuf::RepeatedPtrField<inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::ModelInput>& ios,
     const std::set<std::string>& allowed_shape_tensors)
 {
   for (const auto& io : ios) {
@@ -691,7 +691,7 @@ PlanBackend::Context::ValidateInputs(
 
 Status
 PlanBackend::Context::ValidateOutputs(
-    const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios,
+    const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios,
     const std::set<std::string>& allowed_shape_tensors)
 {
   for (const auto& io : ios) {
@@ -1034,15 +1034,15 @@ PlanBackend::Context::InitializeExecuteInputBinding(
 
 Status
 PlanBackend::Context::InitializeSequenceControlInputBindings(
-    const ModelConfig& config)
+    const inference::ModelConfig& config)
 {
   if (config.has_sequence_batching()) {
-    std::vector<ModelSequenceBatching::Control::Kind> boolean_kinds{
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_START,
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_END,
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY};
+    std::vector<inference::ModelSequenceBatching::Control::Kind> boolean_kinds{
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_START,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_END,
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_READY};
 
-    for (const ModelSequenceBatching::Control::Kind control_kind :
+    for (const inference::ModelSequenceBatching::Control::Kind control_kind :
          boolean_kinds) {
       const bool required = false;
 
@@ -1061,10 +1061,10 @@ PlanBackend::Context::InitializeSequenceControlInputBindings(
       }
     }
 
-    std::vector<ModelSequenceBatching::Control::Kind> typdef_kinds{
-        ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID};
+    std::vector<inference::ModelSequenceBatching::Control::Kind> typdef_kinds{
+        inference::ModelSequenceBatching::Control::CONTROL_SEQUENCE_CORRID};
 
-    for (const ModelSequenceBatching::Control::Kind control_kind :
+    for (const inference::ModelSequenceBatching::Control::Kind control_kind :
          typdef_kinds) {
       const bool required = false;
 
@@ -1089,7 +1089,7 @@ PlanBackend::Context::InitializeSequenceControlInputBindings(
 
 Status
 PlanBackend::Context::InitializeConfigShapeInputBindings(
-    const ::google::protobuf::RepeatedPtrField<ModelInput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::ModelInput>& ios)
 {
   for (const auto& io : ios) {
     const DimsList& model_config_dims =
@@ -1103,7 +1103,7 @@ PlanBackend::Context::InitializeConfigShapeInputBindings(
 
 Status
 PlanBackend::Context::InitializeConfigExecuteInputBindings(
-    const ::google::protobuf::RepeatedPtrField<ModelInput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::inference::ModelInput>& ios)
 {
   for (const auto& io : ios) {
     const DimsList& model_config_dims =
@@ -1117,7 +1117,7 @@ PlanBackend::Context::InitializeConfigExecuteInputBindings(
 
 Status
 PlanBackend::Context::InitializeConfigShapeOutputBindings(
-    const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios)
 {
   for (const auto& io : ios) {
     // the maximum byte sizes across all profiles
@@ -1232,7 +1232,7 @@ PlanBackend::Context::InitializeConfigShapeOutputBindings(
 
 Status
 PlanBackend::Context::InitializeConfigExecuteOutputBindings(
-    const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios)
+    const ::google::protobuf::RepeatedPtrField<inference::ModelOutput>& ios)
 {
   for (const auto& io : ios) {
     // the maximum byte sizes across all profiles

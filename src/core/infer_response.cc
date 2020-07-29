@@ -139,7 +139,7 @@ InferenceResponse::AddOutput(
   LOG_VERBOSE(1) << "add response output: " << outputs_.back();
 
   if (backend_ != nullptr) {
-    const ModelOutput* output_config;
+    const inference::ModelOutput* output_config;
     RETURN_IF_ERROR(backend_->GetOutput(name, &output_config));
     if (output_config->has_reshape()) {
       const bool has_batch_dim = (backend_->Config().max_batch_size() > 0);
@@ -165,7 +165,7 @@ InferenceResponse::AddOutput(
   LOG_VERBOSE(1) << "add response output: " << outputs_.back();
 
   if (backend_ != nullptr) {
-    const ModelOutput* output_config;
+    const inference::ModelOutput* output_config;
     RETURN_IF_ERROR(backend_->GetOutput(name, &output_config));
     if (output_config->has_reshape()) {
       const bool has_batch_dim = (backend_->Config().max_batch_size() > 0);
@@ -239,7 +239,7 @@ InferenceResponse::Output::~Output()
 
 void
 InferenceResponse::Output::Reshape(
-    const bool has_batch_dim, const ModelOutput* output_config)
+    const bool has_batch_dim, const inference::ModelOutput* output_config)
 {
   std::deque<int64_t> variable_size_values;
 
@@ -363,7 +363,7 @@ std::ostream&
 operator<<(std::ostream& out, const InferenceResponse::Output& output)
 {
   out << "output: " << output.Name()
-      << ", type: " << inference::DataTypeToProtocolString(output.DType())
+      << ", type: " << DataTypeToProtocolString(output.DType())
       << ", shape: " << DimsListToString(output.Shape());
   return out;
 }

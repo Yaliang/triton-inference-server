@@ -640,11 +640,11 @@ message ModelOptimizationPolicy
 }
 
 //@@
-//@@.. cpp:var:: message ModelQueuePolicy
+//@@.. cpp:var:: message inference::ModelQueuePolicy
 //@@
 //@@   Queue policy for inference requests.
 //@@
-message ModelQueuePolicy
+message inference::ModelQueuePolicy
 {
   //@@
   //@@  .. cpp:enum:: TimeoutAction
@@ -762,22 +762,22 @@ message ModelDynamicBatching
   //@@
   uint32 default_priority_level = 5;
 
-  //@@  .. cpp:var:: ModelQueuePolicy default_queue_policy
+  //@@  .. cpp:var:: inference::ModelQueuePolicy default_queue_policy
   //@@
   //@@     The default queue policy used for requests that don't require
   //@@     priority handling and requests that specify priority levels where
   //@@     there is no specific policy given. If not specified, a policy with
   //@@     default field values will be used.
   //@@
-  ModelQueuePolicy default_queue_policy = 6;
+  inference::ModelQueuePolicy default_queue_policy = 6;
 
-  //@@  .. cpp:var:: map<uint32, ModelQueuePolicy> priority_queue_policy
+  //@@  .. cpp:var:: map<uint32, inference::ModelQueuePolicy> priority_queue_policy
   //@@
   //@@     Specify the queue policy for the priority level. The default queue
   //@@     policy will be used if a priority level doesn't specify a queue
   //@@     policy.
   //@@
-  map<uint32, ModelQueuePolicy> priority_queue_policy = 7;
+  map<uint32, inference::ModelQueuePolicy> priority_queue_policy = 7;
 }
 
 //@@

@@ -356,10 +356,10 @@ extern "C" {
 #endif
 
 //
-// TRITONSERVER_inference::DataType
+// TRITONSERVER_DataType
 //
 const char*
-TRITONSERVER_inference::DataTypeString(TRITONSERVER_inference::DataType datatype)
+TRITONSERVER_DataTypeString(TRITONSERVER_DataType datatype)
 {
   switch (datatype) {
     case TRITONSERVER_TYPE_BOOL:
@@ -395,15 +395,15 @@ TRITONSERVER_inference::DataTypeString(TRITONSERVER_inference::DataType datatype
   return "<invalid>";
 }
 
-TRITONSERVER_inference::DataType
-TRITONSERVER_StringToinference::DataType(const char* dtype)
+TRITONSERVER_DataType
+TRITONSERVER_StringToDataType(const char* dtype)
 {
   const size_t len = strlen(dtype);
-  return inference::DataTypeToTriton(ni::ProtocolStringToinference::DataType(dtype, len));
+  return DataTypeToTriton(ni::ProtocolStringToDataType(dtype, len));
 }
 
 uint32_t
-TRITONSERVER_inference::DataTypeByteSize(TRITONSERVER_inference::DataType datatype)
+TRITONSERVER_DataTypeByteSize(TRITONSERVER_DataType datatype)
 {
   switch (datatype) {
     case TRITONSERVER_TYPE_BOOL:
@@ -1181,13 +1181,13 @@ TRITONSERVER_InferenceRequestSetTimeoutMicroseconds(
 TRITONSERVER_Error*
 TRITONSERVER_InferenceRequestAddInput(
     TRITONSERVER_InferenceRequest* inference_request, const char* name,
-    const TRITONSERVER_inference::DataType datatype, const int64_t* shape,
+    const TRITONSERVER_DataType datatype, const int64_t* shape,
     uint64_t dim_count)
 {
   ni::InferenceRequest* lrequest =
       reinterpret_cast<ni::InferenceRequest*>(inference_request);
   RETURN_IF_STATUS_ERROR(lrequest->AddOriginalInput(
-      name, ni::TritonToinference::DataType(datatype), shape, dim_count));
+      name, ni::TritonToDataType(datatype), shape, dim_count));
   return nullptr;  // Success
 }
 
@@ -1406,7 +1406,7 @@ TRITONSERVER_InferenceResponseOutputCount(
 TRITONSERVER_Error*
 TRITONSERVER_InferenceResponseOutput(
     TRITONSERVER_InferenceResponse* inference_response, const uint32_t index,
-    const char** name, TRITONSERVER_inference::DataType* datatype, const int64_t** shape,
+    const char** name, TRITONSERVER_DataType* datatype, const int64_t** shape,
     uint64_t* dim_count, const void** base, size_t* byte_size,
     TRITONSERVER_MemoryType* memory_type, int64_t* memory_type_id, void** userp)
 {
@@ -1425,7 +1425,7 @@ TRITONSERVER_InferenceResponseOutput(
   const ni::InferenceResponse::Output& output = outputs[index];
 
   *name = output.Name().c_str();
-  *datatype = inference::DataTypeToTriton(output.DType());
+  *datatype = DataTypeToTriton(output.DType());
 
   const std::vector<int64_t>& oshape = output.Shape();
   *shape = &oshape[0];
@@ -1706,7 +1706,7 @@ TRITONSERVER_ServerModelMetadata(
         metadata, ni::TritonJson::ValueType::OBJECT);
     RETURN_IF_STATUS_ERROR(io_metadata.AddStringRef("name", io.name().c_str()));
     RETURN_IF_STATUS_ERROR(io_metadata.AddStringRef(
-        "datatype", ni::inference::DataTypeToProtocolString(io.data_type())));
+        "datatype", ni::DataTypeToProtocolString(io.data_type())));
 
     // Input shape. If the model supports batching then must include
     // '-1' for the batch dimension.
@@ -1731,7 +1731,7 @@ TRITONSERVER_ServerModelMetadata(
         metadata, ni::TritonJson::ValueType::OBJECT);
     RETURN_IF_STATUS_ERROR(io_metadata.AddStringRef("name", io.name().c_str()));
     RETURN_IF_STATUS_ERROR(io_metadata.AddStringRef(
-        "datatype", ni::inference::DataTypeToProtocolString(io.data_type())));
+        "datatype", ni::DataTypeToProtocolString(io.data_type())));
 
     // Output shape. If the model supports batching then must include
     // '-1' for the batch dimension.

@@ -49,7 +49,7 @@ class AutoFillSavedModelImpl : public AutoFill {
   {
   }
 
-  Status Fix(ModelConfig* config) override;
+  Status Fix(inference::ModelConfig* config) override;
 
  private:
   template <class ModelIO>
@@ -59,7 +59,7 @@ class AutoFillSavedModelImpl : public AutoFill {
   Status FixIOConfig(
       const TRTISTF_IOList* reference_list, IOList<IO>* mutable_list);
 
-  Status FixBatchingSupport(ModelConfig* config);
+  Status FixBatchingSupport(inference::ModelConfig* config);
 
   const std::string savedmodel_dirname_;
   std::unique_ptr<TRTISTF_Model, decltype(&TRTISTF_ModelDelete)> trtistf_model_;
@@ -67,7 +67,7 @@ class AutoFillSavedModelImpl : public AutoFill {
 };
 
 Status
-AutoFillSavedModelImpl::Fix(ModelConfig* config)
+AutoFillSavedModelImpl::Fix(inference::ModelConfig* config)
 {
   config->set_platform(kTensorFlowSavedModelPlatform);
 
@@ -87,17 +87,17 @@ AutoFillSavedModelImpl::Fix(ModelConfig* config)
   RETURN_IF_ERROR(FixIOConfig(inputs, config->mutable_input()));
 
   // Outputs
-  const TRTISTF_IOList* outputs = TRTISTF_ModelOutputs(trtistf_model_.get());
+  const TRTISTF_IOList* outputs = TRTISTF_inference::ModelOutputs(trtistf_model_.get());
   RETURN_IF_ERROR(FixIOConfig(outputs, config->mutable_output()));
 
   return Status::Success;
 }
 
 Status
-AutoFillSavedModelImpl::FixBatchingSupport(ModelConfig* config)
+AutoFillSavedModelImpl::FixBatchingSupport(inference::ModelConfig* config)
 {
   const TRTISTF_IOList* inputs = TRTISTF_ModelInputs(trtistf_model_.get());
-  const TRTISTF_IOList* outputs = TRTISTF_ModelOutputs(trtistf_model_.get());
+  const TRTISTF_IOList* outputs = TRTISTF_inference::ModelOutputs(trtistf_model_.get());
 
   // Assume model doesn't support batching unless we see a batch
   // dimension (-1) on signature of every model input and output.
@@ -333,11 +333,11 @@ AutoFillSavedModel::Create(
 class AutoFillGraphDefImpl : public AutoFill {
  public:
   AutoFillGraphDefImpl(const std::string& model_name) : AutoFill(model_name) {}
-  Status Fix(ModelConfig* config) override;
+  Status Fix(inference::ModelConfig* config) override;
 };
 
 Status
-AutoFillGraphDefImpl::Fix(ModelConfig* config)
+AutoFillGraphDefImpl::Fix(inference::ModelConfig* config)
 {
   config->set_platform(kTensorFlowGraphDefPlatform);
 

@@ -46,7 +46,7 @@ class CustomBackend : public InferenceBackend {
 
   Status Init(
       const std::string& path, const std::vector<std::string>& server_params,
-      const ModelConfig& config);
+      const inference::ModelConfig& config);
 
   // Create a context for execution for each instance for the custom
   // 'models'.
